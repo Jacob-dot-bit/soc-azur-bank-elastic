@@ -1,0 +1,93 @@
+{
+  "rule_id": "azur-bank-client-data-exfil",
+  "name": "Lecture massive base clients",
+  "description": "Un même compte lit au moins 500 enregistrements de la table clients en 10 minutes (audit PostgreSQL). Signe d'exfiltration de données clients ou de compte compromis.",
+  "type": "threshold",
+  "language": "kuery",
+  "query": "event.dataset : \"db.audit\" and event.action : \"select\" and object : \"clients\"",
+  "threshold": {
+    "field": [
+      "user.name"
+    ],
+    "value": 500
+  },
+  "from": "now-10m",
+  "severity": "high",
+  "risk_score": 73,
+  "false_positives": [
+    "Traitements batch (CRM, reporting réglementaire) : exclure leurs comptes de service par exception."
+  ],
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0009",
+        "name": "Collection",
+        "reference": "https://attack.mitre.org/tactics/TA0009/"
+      },
+      "technique": [
+        {
+          "id": "T1530",
+          "name": "Data from Cloud Storage",
+          "reference": "https://attack.mitre.org/techniques/T1530/",
+          "subtechnique": []
+        }
+      ]
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0010",
+        "name": "Exfiltration",
+        "reference": "https://attack.mitre.org/tactics/TA0010/"
+      },
+      "technique": []
+    }
+  ],
+  "alert_suppression": {
+    "duration": {
+      "value": 30,
+      "unit": "m"
+    }
+  },
+  "required_fields": [
+    {
+      "name": "event.dataset",
+      "type": "keyword"
+    },
+    {
+      "name": "event.action",
+      "type": "keyword"
+    },
+    {
+      "name": "object",
+      "type": "keyword"
+    },
+    {
+      "name": "user.name",
+      "type": "keyword"
+    }
+  ],
+  "index": [
+    "logs-db.audit-*"
+  ],
+  "enabled": true,
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "interval": "1m",
+  "to": "now",
+  "max_signals": 100,
+  "note": "## Triage\n1. Identifier le compte (`user.name`) et l'IP source (`source.ip`) : poste attendu pour ce compte ?\n2. Vérifier dans `logs-bastion.auth-*` la connexion qui précède (MFA, IP, horaire).\n3. Chercher un `event.action : \"export\"` du même compte et sa `destination.ip` (sortie vers Internet = exfiltration avérée).\n4. Comparer au volume habituel du compte sur 30 jours (un conseiller lit quelques dizaines de fiches par heure).\n\n## Réponse\n- Exfiltration confirmée : désactiver le compte AD, couper la session base, bloquer `destination.ip` sur le pare-feu, ouvrir un Case (criticité élevée).\n- Données de carte concernées : déclencher la procédure PCI DSS (notification acquéreur / marques) et conserver les preuves (logs ≥ 1 an).\n",
+  "references": [
+    "https://attack.mitre.org/techniques/T1530/"
+  ],
+  "tags": [
+    "Azur Bank",
+    "Use case groupe 3",
+    "Base clients",
+    "Exfiltration",
+    "PCI DSS"
+  ]
+}

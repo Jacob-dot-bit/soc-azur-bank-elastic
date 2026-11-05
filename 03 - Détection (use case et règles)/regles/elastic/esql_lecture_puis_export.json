@@ -1,0 +1,86 @@
+{
+  "rule_id": "azur-bank-client-data-exfil-esql",
+  "name": "Lecture massive base clients puis export (ES|QL)",
+  "description": "Plus de 500 lectures de la table clients suivies d'un export par le même compte dans une fenêtre de 10 minutes. Version ES|QL de la séquence (compte exact, sans la limite de répétitions d'EQL).",
+  "type": "esql",
+  "language": "esql",
+  "query": "FROM logs-db.audit-*\n| WHERE event.dataset == \"db.audit\" AND ((event.action == \"select\" AND object == \"clients\") OR event.action == \"export\")\n| STATS lectures = COUNT(*) WHERE event.action == \"select\",\n        exports = COUNT(*) WHERE event.action == \"export\",\n        premiere_lecture = MIN(@timestamp) WHERE event.action == \"select\",\n        dernier_export = MAX(@timestamp) WHERE event.action == \"export\",\n        source.ip = VALUES(source.ip),\n        destination.ip = VALUES(destination.ip)\n  BY user.name\n| WHERE lectures > 500 AND exports > 0 AND dernier_export > premiere_lecture",
+  "from": "now-10m",
+  "severity": "critical",
+  "risk_score": 99,
+  "false_positives": [
+    "Export planifié légitime précédé d'une lecture volumineuse (à exclure par compte de service)."
+  ],
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0009",
+        "name": "Collection",
+        "reference": "https://attack.mitre.org/tactics/TA0009/"
+      },
+      "technique": [
+        {
+          "id": "T1530",
+          "name": "Data from Cloud Storage",
+          "reference": "https://attack.mitre.org/techniques/T1530/",
+          "subtechnique": []
+        }
+      ]
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0010",
+        "name": "Exfiltration",
+        "reference": "https://attack.mitre.org/tactics/TA0010/"
+      },
+      "technique": [
+        {
+          "id": "T1048",
+          "name": "Exfiltration Over Alternative Protocol",
+          "reference": "https://attack.mitre.org/techniques/T1048/",
+          "subtechnique": [
+            {
+              "id": "T1048.002",
+              "name": "Exfiltration Over Asymmetric Encrypted Non-C2 Protocol",
+              "reference": "https://attack.mitre.org/techniques/T1048/002/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "alert_suppression": {
+    "group_by": [
+      "user.name"
+    ],
+    "duration": {
+      "value": 30,
+      "unit": "m"
+    },
+    "missing_fields_strategy": "suppress"
+  },
+  "index": [
+    "logs-db.audit-*"
+  ],
+  "enabled": true,
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "interval": "1m",
+  "to": "now",
+  "max_signals": 100,
+  "note": "## Triage\n1. Identifier le compte (`user.name`) et l'IP source (`source.ip`) : poste attendu pour ce compte ?\n2. Vérifier dans `logs-bastion.auth-*` la connexion qui précède (MFA, IP, horaire).\n3. Chercher un `event.action : \"export\"` du même compte et sa `destination.ip` (sortie vers Internet = exfiltration avérée).\n4. Comparer au volume habituel du compte sur 30 jours (un conseiller lit quelques dizaines de fiches par heure).\n\n## Réponse\n- Exfiltration confirmée : désactiver le compte AD, couper la session base, bloquer `destination.ip` sur le pare-feu, ouvrir un Case (criticité élevée).\n- Données de carte concernées : déclencher la procédure PCI DSS (notification acquéreur / marques) et conserver les preuves (logs ≥ 1 an).\n",
+  "references": [
+    "https://attack.mitre.org/techniques/T1530/"
+  ],
+  "tags": [
+    "Azur Bank",
+    "Use case groupe 3",
+    "Base clients",
+    "Exfiltration",
+    "PCI DSS"
+  ]
+}

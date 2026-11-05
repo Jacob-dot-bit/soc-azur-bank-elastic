@@ -1,0 +1,16 @@
+title: Lecture massive base clients
+id: azur-bank-client-data-exfil
+status: experimental
+logsource:
+  product: database
+  service: audit
+detection:
+  reads:
+    event.action: 'select'
+    object: 'clients'
+  timeframe: 10m
+  condition: reads | count(user.name) > 500
+level: high
+tags:
+  - attack.t1530
+  - attack.ta0010

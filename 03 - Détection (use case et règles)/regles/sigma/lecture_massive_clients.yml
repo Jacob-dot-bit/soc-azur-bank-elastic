@@ -1,0 +1,47 @@
+title: Lecture de la table clients
+id: 6c1f2b9e-4a7d-4e51-9a3c-2d8e7f0b5a11
+name: azur_bank_lecture_table_clients
+status: experimental
+description: Requete SELECT sur la table clients de la base core_clients (audit pgaudit). Regle de base, non generee seule, utilisee par la correlation ci-dessous.
+author: Azur Bank SOC
+date: 2026-11-05
+logsource:
+  product: postgresql
+  service: pgaudit
+detection:
+  selection:
+    event.action: select
+    object: clients
+  condition: selection
+falsepositives:
+  - Traitements batch nocturnes (exports CRM, reporting reglementaire)
+level: informational
+generate: false
+tags:
+  - attack.collection
+  - attack.t1530
+---
+title: Lecture massive base clients
+id: 2f0a7d3c-8b61-4c0e-b5d4-91e6a3c7f802
+status: experimental
+description: Un meme compte lit plus de 500 enregistrements de la table clients en moins de 10 minutes. Signe d'exfiltration ou de compte compromis.
+author: Azur Bank SOC
+date: 2026-11-05
+references:
+  - https://attack.mitre.org/techniques/T1530/
+correlation:
+  type: event_count
+  rules:
+    - azur_bank_lecture_table_clients
+  group-by:
+    - user.name
+  timespan: 10m
+  condition:
+    gt: 500
+falsepositives:
+  - Compte de service applicatif non exclu (CRM, batch)
+level: high
+tags:
+  - attack.collection
+  - attack.exfiltration
+  - attack.t1530
