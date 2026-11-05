@@ -1,0 +1,112 @@
+{
+  "description": "Azur Bank - normalisation ECS des lignes pgaudit (PostgreSQL) vers logs-db.audit-*",
+  "processors": [
+    {
+      "set": {
+        "field": "event.original",
+        "copy_from": "message",
+        "ignore_empty_value": true,
+        "override": false
+      }
+    },
+    {
+      "grok": {
+        "field": "message",
+        "patterns": [
+          "^%{TIMESTAMP_ISO8601:_tmp.ts} %{WORD:_tmp.tz} \\[%{NUMBER:process.pid:long}\\] %{DATA:_tmp.user}@%{DATA:_tmp.db} %{NOTSPACE:_tmp.client} %{WORD:log.level}:  AUDIT: %{WORD:_tmp.audit_type},%{NUMBER:_tmp.stmt_id:long},%{NUMBER:_tmp.substmt_id:long},%{WORD:_tmp.class},%{DATA:_tmp.command},%{DATA:_tmp.object_type},%{DATA:_tmp.object_name},%{GREEDYDATA:_tmp.statement}$",
+          "^%{TIMESTAMP_ISO8601:_tmp.ts} %{WORD:_tmp.tz} \\[%{NUMBER:process.pid:long}\\] %{DATA:_tmp.user}@%{DATA:_tmp.db} %{NOTSPACE:_tmp.client} %{WORD:log.level}:  %{GREEDYDATA:_tmp.pg_message}$",
+          "^%{TIMESTAMP_ISO8601:_tmp.ts} %{WORD:_tmp.tz} \\[%{NUMBER:process.pid:long}\\] %{WORD:log.level}:  %{GREEDYDATA:_tmp.pg_message}$"
+        ],
+        "on_failure": [
+          {
+            "append": {
+              "field": "tags",
+              "value": "pgaudit_parse_failure"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "date": {
+        "field": "_tmp.ts",
+        "formats": [
+          "yyyy-MM-dd HH:mm:ss.SSS"
+        ],
+        "timezone": "{{{_tmp.tz}}}",
+        "if": "ctx._tmp?.ts != null"
+      }
+    },
+    {
+      "set": {
+        "field": "user.name",
+        "copy_from": "_tmp.user",
+        "if": "ctx._tmp?.user != null && ctx._tmp.user != ''"
+      }
+    },
+    {
+      "set": {
+        "field": "db.system",
+        "value": "postgresql"
+      }
+    },
+    {
+      "set": {
+        "field": "db.name",
+        "copy_from": "_tmp.db",
+        "if": "ctx._tmp?.db != null && ctx._tmp.db != ''"
+      }
+    },
+    {
+      "convert": {
+        "field": "_tmp.client",
+        "target_field": "source.ip",
+        "type": "ip",
+        "ignore_missing": true,
+        "ignore_failure": true
+      }
+    },
+    {
+      "lowercase": {
+        "field": "log.level",
+        "ignore_missing": true
+      }
+    },
+    {
+      "script": {
+        "lang": "painless",
+        "description": "Champs metier : event.action (select/insert/update/delete, export pour COPY ... TO), object (table sans schema)",
+        "if": "ctx._tmp?.command != null",
+        "source": "String cmd = ctx._tmp.command.toLowerCase(); ctx.event = ctx.event ?: [:]; ctx.event.action = cmd == 'copy' ? 'export' : cmd; ctx.event.kind = 'event'; ctx.event.category = ['database']; ctx.event.type = ['access']; ctx.event.outcome = 'success'; String obj = ctx._tmp.object_name; if (obj != null && obj != '') { int i = obj.lastIndexOf('.'); String t = i >= 0 ? obj.substring(i + 1) : obj; ctx.object = t; ctx.db.table = t; ctx.db.object = obj; } ctx.db.audit = ['type': ctx._tmp.audit_type, 'class': ctx._tmp.class, 'command': ctx._tmp.command, 'object_type': ctx._tmp.object_type, 'statement_id': ctx._tmp.stmt_id, 'substatement_id': ctx._tmp.substmt_id]; String st = ctx._tmp.statement; if (st.endsWith(',<not logged>')) { st = st.substring(0, st.length() - 13); } if (st.startsWith('\"') && st.endsWith('\"') && st.length() > 1) { st = st.substring(1, st.length() - 1).replace('\"\"', '\"'); } ctx.db.statement = st; String up = st.trim().toUpperCase(); if (up.startsWith('COPY') && up.contains(' TO ')) { ctx.event.action = 'export'; }"
+      }
+    },
+    {
+      "set": {
+        "field": "event.kind",
+        "value": "event",
+        "override": false
+      }
+    },
+    {
+      "set": {
+        "field": "message",
+        "copy_from": "_tmp.pg_message",
+        "if": "ctx._tmp?.pg_message != null"
+      }
+    },
+    {
+      "remove": {
+        "field": "_tmp",
+        "ignore_missing": true
+      }
+    }
+  ],
+  "on_failure": [
+    {
+      "set": {
+        "field": "error.message",
+        "value": "{{ _ingest.on_failure_message }}"
+      }
+    }
+  ]
+}
