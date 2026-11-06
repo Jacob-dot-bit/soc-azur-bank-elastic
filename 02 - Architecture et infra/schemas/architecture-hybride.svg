@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<defs>
+<marker id="a-data" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00897B"/></marker>
+<marker id="a-ctrl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0B64DD"/></marker>
+<marker id="a-net" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#546E7A"/></marker>
+<marker id="a-soar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8E24AA"/></marker>
+<marker id="a-user" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker>
+</defs>
+<rect width="1600" height="900" fill="#FFFFFF"/>
+<text x="800.0" y="46.4" text-anchor="middle" font-size="24" font-weight="bold" fill="#1B2631">Azur Bank · Architecture SIEM hybride : sites On-Prem + Elastic Cloud</text>
+<rect x="40" y="80" width="720" height="670" rx="40.2" fill="#F4F6F8" stroke="#5B6770" stroke-width="2"/>
+<text x="52" y="105.0" text-anchor="start" font-size="15" font-weight="bold" fill="#263238">ON-PREM · AZUR BANK (1 500 collaborateurs, multi-sites)</text>
+<rect x="60" y="120" width="680" height="360" rx="21.6" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="72" y="143.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Siège · Datacenter</text>
+<rect x="80" y="160" width="200" height="80" rx="4.8" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="180.0" y="187.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#7A4A00">srv-dc01</text>
+<text x="180.0" y="204.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">Active Directory</text>
+<text x="180.0" y="221.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">Security + Sysmon</text>
+<rect x="300" y="160" width="200" height="80" rx="4.8" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="400.0" y="187.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#7A4A00">db-clients-01</text>
+<text x="400.0" y="204.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">PostgreSQL + pgaudit</text>
+<text x="400.0" y="221.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">base clients (use case)</text>
+<rect x="520" y="160" width="200" height="80" rx="4.8" fill="#FDEEEE" stroke="#C62828" stroke-width="1.5"/>
+<text x="620.0" y="187.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#8E1B1B">web-portail-01</text>
+<text x="620.0" y="204.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#8E1B1B">Portail clients nginx</text>
+<text x="620.0" y="221.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#8E1B1B">DMZ · access logs</text>
+<rect x="80" y="270" width="200" height="80" rx="4.8" fill="#F1ECFA" stroke="#5E35B1" stroke-width="1.5"/>
+<text x="180.0" y="297.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#3E2380">bastion-01</text>
+<text x="180.0" y="314.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#3E2380">SSH + MFA (zone ADM)</text>
+<text x="180.0" y="331.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#3E2380">collecteur syslog</text>
+<rect x="300" y="270" width="200" height="80" rx="4.8" fill="#FFFFFF" stroke="#78909C" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="400.0" y="297.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#455A64">Passerelle SWIFT / SEPA</text>
+<text x="400.0" y="314.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">syslog → Logstash (simulée)</text>
+<text x="400.0" y="331.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">SWIFT CSP</text>
+<rect x="520" y="270" width="200" height="80" rx="4.8" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+<text x="620.0" y="297.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#BF360C">fw-01 · OPNsense</text>
+<text x="620.0" y="314.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#BF360C">filtrage inter-zones</text>
+<text x="620.0" y="331.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#BF360C">seule sortie Internet</text>
+<rect x="80" y="365" width="640" height="100" rx="6.0" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="400.0" y="403.6" text-anchor="middle" font-size="12" font-weight="bold" fill="#004D40">Zone SOC · siem-elk-01 : Fleet Server + Logstash + Elasticsearch + Kibana Security</text>
+<text x="400.0" y="419.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">licence Basic gratuite · les agents (pol-windows, pol-linux-*) parlent à Fleet sur site (8220/9200)</text>
+<text x="400.0" y="434.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">collecte, stockage chaud et détection dans la banque · seul ADM accède à la base clients</text>
+<rect x="60" y="500" width="330" height="230" rx="13.8" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="72" y="523.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Agences (N sites)</text>
+<rect x="80" y="560" width="290" height="80" rx="4.8" fill="#EAF6EC" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="225.0" y="587.6" text-anchor="middle" font-size="13" font-weight="bold" fill="#1B5E20">Postes guichetiers Windows 11</text>
+<text x="225.0" y="604.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#1B5E20">Elastic Defend (EDR) + Sysmon</text>
+<text x="225.0" y="621.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#1B5E20">agent : pol-windows</text>
+<text x="225.0" y="676.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">Lien VPN IPsec agence → siège</text>
+<text x="225.0" y="692.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">les logs sortent par fw-01</text>
+<rect x="410" y="500" width="330" height="230" rx="13.8" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="422" y="523.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">SOAR phase 2 (déployé dans le lab)</text>
+<rect x="430" y="560" width="290" height="80" rx="4.8" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="575.0" y="587.6" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Shuffle (on-prem, zone SOC)</text>
+<text x="575.0" y="604.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">playbook : case Kibana, compte base</text>
+<text x="575.0" y="621.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">et AD désactivés, IP bloquée sur fw-01</text>
+<text x="575.0" y="676.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">lit les alertes par l'API toutes les minutes</text>
+<text x="575.0" y="692.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">(licence Basic : pas de webhook)</text>
+<text x="842.5" y="408.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">HTTPS 443</text>
+<text x="842.5" y="423.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">sortant uniquement</text>
+<text x="842.5" y="439.2" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">TLS chiffré</text>
+<text x="842.5" y="454.8" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">aucun port entrant</text>
+<text x="842.5" y="470.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">côté banque</text>
+<rect x="920" y="80" width="640" height="470" rx="28.2" fill="#E8F1FD" stroke="#0B64DD" stroke-width="2"/>
+<text x="932" y="105.0" text-anchor="start" font-size="15" font-weight="bold" fill="#0B3D91">ELASTIC CLOUD SERVERLESS · projet Security</text>
+<rect x="950" y="130" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="1090.0" y="161.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#0B3D91">Fleet (managé)</text>
+<text x="1090.0" y="178.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">politiques et mises à jour des agents</text>
+<rect x="950" y="240" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="1090.0" y="271.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#0B3D91">Ingest pipelines</text>
+<text x="1090.0" y="288.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">normalisation ECS (ex. pgaudit → dissect)</text>
+<rect x="950" y="350" width="280" height="90" rx="5.4" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="1090.0" y="382.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#0B3D91">Elasticsearch</text>
+<text x="1090.0" y="399.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">data streams logs-*-banque</text>
+<text x="1090.0" y="416.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">stockage et calcul autoscalés</text>
+<rect x="1260" y="120" width="280" height="100" rx="6.0" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1400.0" y="149.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Moteur de détection</text>
+<text x="1400.0" y="166.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">règles Threshold · EQL · ES|QL</text>
+<text x="1400.0" y="183.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">SIGMA converties</text>
+<text x="1400.0" y="199.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">mapping MITRE ATT&amp;CK</text>
+<rect x="1260" y="250" width="280" height="70" rx="4.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1400.0" y="281.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Alerts → Cases</text>
+<text x="1400.0" y="298.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">tri N1/N2, 5W, timeline</text>
+<rect x="1260" y="350" width="280" height="70" rx="4.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1400.0" y="381.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Workflows (SOAR)</text>
+<text x="1400.0" y="398.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">enrichissement, notification</text>
+<rect x="1260" y="450" width="280" height="70" rx="4.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1400.0" y="481.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Dashboards Kibana Lens</text>
+<text x="1400.0" y="498.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">vue SOC et vue COMEX</text>
+<rect x="920" y="580" width="640" height="170" rx="10.2" fill="#FAFAFA" stroke="#90A4AE" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="932" y="603.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Accès Kibana (SSO + RBAC, HTTPS)</text>
+<rect x="950" y="630" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#5B6770" stroke-width="1.5"/>
+<text x="1090.0" y="661.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Analystes SOC N1 / N2</text>
+<text x="1090.0" y="678.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">triage, investigation</text>
+<rect x="1260" y="630" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#5B6770" stroke-width="1.5"/>
+<text x="1400.0" y="661.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Direction / COMEX</text>
+<text x="1400.0" y="678.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">KPI risque, conformité</text>
+<text x="797.5" y="136.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">contrôle</text>
+<text x="797.5" y="151.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">(Fleet)</text>
+<text x="820.0" y="356.9" text-anchor="middle" font-size="11" font-weight="normal" fill="#00695C">données (logs)</text>
+<rect x="40" y="770" width="500" height="110" rx="6.6" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="290.0" y="804.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Stable</text>
+<text x="290.0" y="821.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">Fleet Server on-prem : la collecte continue même sans le cloud</text>
+<text x="290.0" y="838.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">partie Cloud managée par l'éditeur (SaaS)</text>
+<text x="290.0" y="854.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">agents pilotés via Fleet, aucun flux entrant depuis Internet</text>
+<rect x="550" y="770" width="500" height="110" rx="6.6" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="800.0" y="804.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Scalable</text>
+<text x="800.0" y="821.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">stockage et calcul autoscalés selon le volume</text>
+<text x="800.0" y="838.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">nouveau site = installer l'agent + jeton d'enrôlement</text>
+<text x="800.0" y="854.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">une politique par rôle, réutilisée partout</text>
+<rect x="1060" y="770" width="500" height="110" rx="6.6" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="1310.0" y="804.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Conforme</text>
+<text x="1310.0" y="821.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">TLS en transit, chiffrement au repos, SSO + RBAC</text>
+<text x="1310.0" y="838.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">rétention 12 mois des journaux (PCI DSS 10.5.1)</text>
+<text x="1310.0" y="854.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">production : région UE (RGPD, DORA)</text>
+<polyline points="720,295 840,295 840,165 950,165" fill="none" stroke="#0B64DD" stroke-width="2" stroke-dasharray="8 5" marker-start="url(#a-ctrl)" marker-end="url(#a-ctrl)"/>
+<polyline points="720,330 880,330 880,275 950,275" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="300,560 300,480" fill="none" stroke="#546E7A" stroke-width="2" marker-start="url(#a-net)" marker-end="url(#a-net)"/>
+<polyline points="720,600 850,600 850,530 920,530" fill="none" stroke="#8E24AA" stroke-width="2" stroke-dasharray="8 5" marker-end="url(#a-soar)"/>
+<polyline points="1090,310 1090,350" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1230,380 1245,380 1245,170 1260,170" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1400,220 1400,250" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1400,320 1400,350" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1090,440 1090,485 1260,485" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1000,630 1000,550" fill="none" stroke="#607D8B" stroke-width="2" marker-end="url(#a-user)"/>
+<polyline points="1400,630 1400,520" fill="none" stroke="#607D8B" stroke-width="2" marker-end="url(#a-user)"/>
+</svg>
