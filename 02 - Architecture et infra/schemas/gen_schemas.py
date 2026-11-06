@@ -293,11 +293,9 @@ def lab():
     g.box("vmbr0", 70, 195, 1460, 30, ["vmbr0 · interface publique OVH"], "bar", size=13)
     g.box("nat", 680, 245, 240, 45, ["Hôte pve : routage + NAT"], "node", size=13)
     g.box("vmbr1", 70, 310, 1460, 30, ["vmbr1 · 192.168.100.0/24 · réseau NAT de l'hôte (passerelle .1)"], "bar1", size=13)
-    g.box("old", 1180, 360, 350, 60, ["VMs existantes, inchangées", "105 srv-web-01 · 106 SRV-AD-PinkCastle"], "ghost", size=12)
     g.edge("e_inet", "inet", "vmbr0", [(800, 110), (800, 195)], "net", both=True)
     g.edge("e_n0", "vmbr0", "nat", [(800, 225), (800, 245)], "net")
     g.edge("e_n1", "nat", "vmbr1", [(800, 290), (800, 310)], "net")
-    g.edge("e_old", "old", "vmbr1", [(1355, 360), (1355, 340)], "net")
 
     g.box("fw", 640, 370, 320, 90, ["fw-01 · OPNsense 26.7 (VM)", "WAN 192.168.100.2 · une patte par zone",
                                     "2 vCPU / 2 Go · syslog → bastion-01"], "fw")
@@ -322,8 +320,8 @@ def lab():
               align="left", valign="top")
 
     hw, hh = 310, 105
-    g.box("ws", 90, 615, hw, hh, ["ws-agence (VM, optionnelle)", "10.20.30.47 · Windows 11",
-                                  "Sysmon + Elastic Defend", "agent : pol-windows"], "opt")
+    g.box("ws", 90, 615, hw, hh, ["ws-agence (VM)", "10.20.30.47 · Windows 11",
+                                  "Sysmon + Elastic Defend", "agent : pol-windows"], "node")
     g.box("dc01", 460, 615, hw, hh, ["srv-dc01 (VM)", "10.10.1.10 · Windows Server 2025",
                                      "AD azurbank.local · Security + Sysmon", "agent : pol-windows"], "node")
     g.box("db", 460, 740, hw, hh, ["db-clients-01 (LXC Debian 13)", "10.10.1.20 · PostgreSQL + pgaudit",

@@ -50,7 +50,7 @@ Sur le Proxmox, toutes ces machines sont dans le pool `SOC-run` et portent l'ét
 ws-agence est joint au domaine (OU Agences) ; c.dupont et m.bernard peuvent s'y connecter, y compris en RDP.
 Installation sans intervention : fichier de réponse dans `infra/ws-agence/`.
 
-**Réseau.** `vmbr0` (IP publique OVH) et `vmbr1` (192.168.100.0/24, NAT de l'hôte, VMs existantes 104 à 106)
+**Réseau.** `vmbr0` (IP publique OVH) et `vmbr1` (192.168.100.0/24, NAT de l'hôte, où se trouve aussi une VM hors projet, 106)
 sont inchangés. Les zones utilisent donc `vmbr2` à `vmbr6`, des bridges sans IP sur l'hôte : seul fw-01 les relie.
 Le WAN de fw-01 est sur `vmbr1`, la sortie Internet passe par le NAT de l'hôte (une seule IP publique).
 

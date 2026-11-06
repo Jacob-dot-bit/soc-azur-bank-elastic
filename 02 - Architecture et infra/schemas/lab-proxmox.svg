@@ -26,9 +26,6 @@
 <text x="800.0" y="272.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Hôte pve : routage + NAT</text>
 <rect x="70" y="310" width="1460" height="30" rx="0.0" fill="#FFE0B2" stroke="#E65100" stroke-width="1.5"/>
 <text x="800.0" y="329.6" text-anchor="middle" font-size="13" font-weight="bold" fill="#BF360C">vmbr1 · 192.168.100.0/24 · réseau NAT de l'hôte (passerelle .1)</text>
-<rect x="1180" y="360" width="350" height="60" rx="3.6" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="1355.0" y="386.4" text-anchor="middle" font-size="12" font-weight="bold" fill="#607D8B">VMs existantes, inchangées</text>
-<text x="1355.0" y="402.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#607D8B">105 srv-web-01 · 106 SRV-AD-PinkCastle</text>
 <rect x="640" y="370" width="320" height="90" rx="5.4" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
 <text x="800.0" y="402.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#BF360C">fw-01 · OPNsense 26.7 (VM)</text>
 <text x="800.0" y="419.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#BF360C">WAN 192.168.100.2 · une patte par zone</text>
@@ -56,11 +53,11 @@
 <rect x="1180" y="540" width="350" height="330" rx="19.8" fill="#F1ECFA" stroke="#5E35B1" stroke-width="2"/>
 <text x="1192" y="564.0" text-anchor="start" font-size="14" font-weight="bold" fill="#3E2380">vmbr5 · ADM (administration)</text>
 <text x="1192" y="582.2" text-anchor="start" font-size="13" font-weight="normal" fill="#3E2380">10.0.5.0/24 · gw 10.0.5.1</text>
-<rect x="90" y="615" width="310" height="105" rx="6.3" fill="#FFFFFF" stroke="#78909C" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="245.0" y="646.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#455A64">ws-agence (VM, optionnelle)</text>
-<text x="245.0" y="663.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">10.20.30.47 · Windows 11</text>
-<text x="245.0" y="680.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">Sysmon + Elastic Defend</text>
-<text x="245.0" y="697.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">agent : pol-windows</text>
+<rect x="90" y="615" width="310" height="105" rx="6.3" fill="#FFFFFF" stroke="#5B6770" stroke-width="1.5"/>
+<text x="245.0" y="646.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">ws-agence (VM)</text>
+<text x="245.0" y="663.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">10.20.30.47 · Windows 11</text>
+<text x="245.0" y="680.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">Sysmon + Elastic Defend</text>
+<text x="245.0" y="697.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">agent : pol-windows</text>
 <rect x="460" y="615" width="310" height="105" rx="6.3" fill="#FFFFFF" stroke="#5B6770" stroke-width="1.5"/>
 <text x="615.0" y="646.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">srv-dc01 (VM)</text>
 <text x="615.0" y="663.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">10.10.1.10 · Windows Server 2025</text>
@@ -95,7 +92,6 @@
 <polyline points="800,110 800,195" fill="none" stroke="#546E7A" stroke-width="2" marker-start="url(#a-net)" marker-end="url(#a-net)"/>
 <polyline points="800,225 800,245" fill="none" stroke="#546E7A" stroke-width="2" marker-end="url(#a-net)"/>
 <polyline points="800,290 800,310" fill="none" stroke="#546E7A" stroke-width="2" marker-end="url(#a-net)"/>
-<polyline points="1355,360 1355,340" fill="none" stroke="#546E7A" stroke-width="2" marker-end="url(#a-net)"/>
 <polyline points="800,340 800,370" fill="none" stroke="#546E7A" stroke-width="2" marker-end="url(#a-net)"/>
 <polyline points="640,415 610,415" fill="none" stroke="#546E7A" stroke-width="2" marker-end="url(#a-net)"/>
 <polyline points="690,460 690,490 245,490 245,540" fill="none" stroke="#546E7A" stroke-width="2" marker-end="url(#a-net)"/>
