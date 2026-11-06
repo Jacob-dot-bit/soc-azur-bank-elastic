@@ -18,7 +18,7 @@ vite, et sommes-nous en règle ?* Capture du 6 novembre 2026 : `dashboard_comex.
 
 Les alertes « building block » (événements unitaires d'une séquence EQL) sont exclues : un incident = une alerte principale.
 
-Lecture des chiffres du 6 novembre : 11 incidents critiques, tous issus des tests d'exfiltration et de fraude SWIFT ; MTTD
+Lecture des chiffres du 6 novembre : 11 incidents critiques, tous issus des tests du lab (exfiltration, fraude SWIFT, force brute) ; MTTD
 d'une minute (la règle tourne chaque minute) ; MTTR de 71 min en moyenne, tiré vers le haut par les alertes de la matinée,
 traitées avant la mise en service du SOAR. Depuis Shuffle, la prise en charge tombe à environ une minute. Un faux positif est
 déclaré : l'injection SQL de test lancée depuis le bastion (scanner autorisé).
