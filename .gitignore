@@ -4,3 +4,5 @@ mots-de-passe-lab.*
 
 # Énoncés et supports de cours de l'ESGI : gardés en local, pas publiés
 01 - Énoncé et consignes/*.pdf
+
+__pycache__/
