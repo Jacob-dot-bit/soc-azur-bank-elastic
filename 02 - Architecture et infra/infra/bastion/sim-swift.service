@@ -1,0 +1,6 @@
+[Unit]
+Description=Simulateur passerelle SWIFT (trafic normal vers Logstash sur siem-elk-01)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/sim_swift.py

@@ -1,0 +1,8 @@
+[Unit]
+Description=Trafic SWIFT simulé, jours ouvrés 7 h - 20 h (heure de Paris)
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 07..19:00/5:00 Europe/Paris
+
+[Install]
+WantedBy=timers.target

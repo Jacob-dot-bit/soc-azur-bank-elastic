@@ -1,0 +1,68 @@
+{
+  "rule_id": "azur-bank-swift-virement-anormal",
+  "name": "Virement SWIFT anormal",
+  "type": "query",
+  "language": "kuery",
+  "description": "Message de paiement SWIFT sortant (MT103 client ou MT202 interbancaire) hors norme : montant d'au moins 1 M EUR, correspondant absent du référentiel de la banque, ou émis hors heures ouvrées. Champs enrichis par Logstash (pipeline swift-gateway).",
+  "query": "event.dataset : \"swift.gateway\" and event.action : \"MSG_OUT\" and swift.message_type : (\"MT103\" or \"MT202\") and (swift.amount >= 1000000 or swift.correspondant_connu : false or swift.hors_heures_ouvrees : true)",
+  "index": [
+    "logs-swift.gateway-*"
+  ],
+  "from": "now-6m",
+  "interval": "5m",
+  "to": "now",
+  "severity": "critical",
+  "risk_score": 95,
+  "required_fields": [
+    {
+      "name": "swift.amount",
+      "type": "float"
+    },
+    {
+      "name": "swift.correspondant_connu",
+      "type": "boolean"
+    },
+    {
+      "name": "swift.hors_heures_ouvrees",
+      "type": "boolean"
+    }
+  ],
+  "false_positives": [
+    "Virement exceptionnel validé (opération de trésorerie, nouveau correspondant en cours de référencement) : ajouter une exception sur swift.ref."
+  ],
+  "note": "## Triage\n1. Lire `swift.ref`, `swift.receiver`, `swift.amount` et l'opérateur (`user.name`).\n2. Le correspondant est-il en cours de référencement (back-office) ? Le virement a-t-il un double contrôle (4 yeux) ?\n3. L'opérateur était-il connecté à cette heure (`logs-system.security-*` sur son poste, bastion) ?\n\n## Réponse\n- Doute : demander le rappel du message (MT192 / gSRP) au correspondant dans l'heure.\n- Fraude avérée : désactiver le compte de l'opérateur, ouvrir un Case critique, prévenir le responsable SWIFT CSP.\n",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0040",
+        "name": "Impact",
+        "reference": "https://attack.mitre.org/tactics/TA0040/"
+      },
+      "technique": [
+        {
+          "id": "T1657",
+          "name": "Financial Theft",
+          "reference": "https://attack.mitre.org/techniques/T1657/",
+          "subtechnique": []
+        }
+      ]
+    }
+  ],
+  "references": [
+    "https://attack.mitre.org/techniques/T1657/",
+    "https://www.swift.com/myswift/customer-security-programme-csp"
+  ],
+  "tags": [
+    "Azur Bank",
+    "SWIFT CSP",
+    "Paiements",
+    "Licence Basic"
+  ],
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "enabled": true,
+  "max_signals": 100
+}

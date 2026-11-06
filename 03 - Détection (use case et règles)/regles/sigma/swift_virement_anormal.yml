@@ -1,0 +1,30 @@
+title: Virement SWIFT anormal
+id: 9d4e6a1b-3c72-4f08-8e15-6b0c2a7d9f31
+status: experimental
+description: Message de paiement SWIFT sortant (MT103 ou MT202) d'au moins 1 M EUR, vers un correspondant hors referentiel ou emis hors heures ouvrees. Les champs correspondant_connu et hors_heures_ouvrees sont calcules par Logstash.
+author: Azur Bank SOC
+date: 2026-11-06
+references:
+  - https://attack.mitre.org/techniques/T1657/
+logsource:
+  product: swift
+  service: alliance_gateway
+detection:
+  selection:
+    event.action: MSG_OUT
+    swift.message_type:
+      - MT103
+      - MT202
+  montant:
+    swift.amount|gte: 1000000
+  correspondant:
+    swift.correspondant_connu: false
+  horaire:
+    swift.hors_heures_ouvrees: true
+  condition: selection and (montant or correspondant or horaire)
+falsepositives:
+  - Operation de tresorerie exceptionnelle validee, nouveau correspondant en cours de referencement
+level: critical
+tags:
+  - attack.impact
+  - attack.t1657
