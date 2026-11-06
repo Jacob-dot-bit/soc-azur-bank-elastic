@@ -18,7 +18,8 @@ le case dans Kibana. Capture du case : `schemas/case-kibana-c_dupont.png`. Sché
 | 18:17:17 | Compte AD `c.dupont` désactivé, événement 4725 émis par `svc.shuffle` | `logs-system.security-*` (srv-dc01) |
 | 18:17:17 | Alerte ES\|QL (critique), qui arrive après coup et ouvre un deuxième case | `.alerts-security.*` |
 | 18:17:19 | Alertes passées en *Acknowledged*, étiquette `soar-traite` | Kibana Alerts |
-| 18:20 | Prise en charge par l'analyste N1, triage | Kibana Cases |
+| 21:38 | Prise en charge par l'analyste N1, triage (exercice : triage différé, le confinement automatique avait déjà agi) | Kibana Cases |
+| 21:39:40 | Ticket 5W publié, case clos (N2), alertes closes par synchronisation | Kibana Cases |
 
 Détection en 15 s après l'export, confinement 50 s après la première alerte, sans intervention humaine.
 
