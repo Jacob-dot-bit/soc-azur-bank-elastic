@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" font-family="Helvetica, Arial, sans-serif">
+<defs>
+<marker id="a-data" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00897B"/></marker>
+<marker id="a-ctrl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0B64DD"/></marker>
+<marker id="a-net" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#546E7A"/></marker>
+<marker id="a-soar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8E24AA"/></marker>
+<marker id="a-user" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker>
+</defs>
+<rect width="1600" height="960" fill="#FFFFFF"/>
+<text x="800.0" y="43.7" text-anchor="middle" font-size="22" font-weight="bold" fill="#1B2631">Playbook SOAR Shuffle · Réponse à l'exfiltration de la base clients (et fraude SWIFT)</text>
+<text x="800.0" y="72.5" text-anchor="middle" font-size="13" font-weight="normal" fill="#455A64">workflow « Azur Bank - Réponse exfiltration et fraude SWIFT » sur soar-shuffle-01 (10.40.0.20), 4 nœuds Python, exécuté toutes les 60 s</text>
+<rect x="40" y="150" width="190" height="96" rx="5.8" fill="#FFFFFF" stroke="#78909C" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="135.0" y="185.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#455A64">Déclencheur</text>
+<text x="135.0" y="202.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">planification</text>
+<text x="135.0" y="219.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">toutes les 60 s</text>
+<rect x="290" y="150" width="230" height="96" rx="5.8" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="405.0" y="185.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">1 · lire_alertes</text>
+<text x="405.0" y="202.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">alertes ouvertes, non</text>
+<text x="405.0" y="219.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">étiquetées soar-traite</text>
+<rect x="580" y="158" width="170" height="80" rx="4.8" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+<text x="665.0" y="194.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#BF360C">nb &gt; 0 ?</text>
+<text x="665.0" y="211.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#BF360C">(condition du lien)</text>
+<rect x="810" y="150" width="230" height="96" rx="5.8" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="925.0" y="185.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">2 · ouvrir_case</text>
+<text x="925.0" y="202.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">un case Kibana par compte</text>
+<text x="925.0" y="219.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">alertes attachées</text>
+<rect x="1090" y="150" width="230" height="96" rx="5.8" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1205.0" y="185.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">3 · reponse</text>
+<text x="1205.0" y="202.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">confinement</text>
+<text x="1205.0" y="219.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">(si actions_actives = oui)</text>
+<rect x="1370" y="150" width="190" height="96" rx="5.8" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1465.0" y="185.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">4 · cloturer</text>
+<text x="1465.0" y="202.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">bilan dans le case,</text>
+<text x="1465.0" y="219.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">alertes acquittées</text>
+<rect x="580" y="300" width="170" height="50" rx="3.0" fill="#ECEFF1" stroke="#B0BEC5" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="665.0" y="329.2" text-anchor="middle" font-size="12" font-weight="bold" fill="#607D8B">fin : rien à traiter</text>
+<text x="780.0" y="182.2" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">oui</text>
+<text x="697.0" y="272.2" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">non</text>
+<rect x="290" y="380" width="750" height="190" rx="11.4" fill="#E8F1FD" stroke="#0B64DD" stroke-width="2"/>
+<text x="302" y="403.0" text-anchor="start" font-size="13" font-weight="bold" fill="#0B3D91"></text>
+<text x="665.0" y="464.2" text-anchor="middle" font-size="13" font-weight="normal" fill="#0B3D91">SIEM on-prem</text>
+<text x="665.0" y="481.1" text-anchor="middle" font-size="13" font-weight="normal" fill="#0B3D91">siem-elk-01 (10.40.0.10)</text>
+<text x="665.0" y="498.0" text-anchor="middle" font-size="13" font-weight="normal" fill="#0B3D91">compte svc-shuffle,</text>
+<text x="665.0" y="514.9" text-anchor="middle" font-size="13" font-weight="normal" fill="#0B3D91">rôle soar_shuffle</text>
+<rect x="310" y="425" width="230" height="120" rx="7.2" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="425.0" y="465.8" text-anchor="middle" font-size="12" font-weight="bold" fill="#0B3D91">Elasticsearch :9200</text>
+<text x="425.0" y="481.4" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">recherche dans</text>
+<text x="425.0" y="497.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">.alerts-security.alerts-*</text>
+<text x="425.0" y="512.6" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">règles du use case + SWIFT</text>
+<rect x="790" y="425" width="230" height="120" rx="7.2" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="905.0" y="465.8" text-anchor="middle" font-size="12" font-weight="bold" fill="#0B3D91">Kibana :5601</text>
+<text x="905.0" y="481.4" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">API Cases : case,</text>
+<text x="905.0" y="497.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">alertes, commentaires</text>
+<text x="905.0" y="512.6" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">API alertes : statut, étiquettes</text>
+<rect x="1090" y="290" width="440" height="280" rx="16.8" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="1102" y="313.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Confinement</text>
+<rect x="1105" y="330" width="410" height="66" rx="4.0" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="1310.0" y="359.4" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A4A00">db-clients-01 · SSH :22, svc-shuffle (clé)</text>
+<text x="1310.0" y="375.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">soar-verrou-db.sh : NOLOGIN, sessions coupées</text>
+<rect x="1105" y="408" width="410" height="66" rx="4.0" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="1310.0" y="437.4" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A4A00">srv-dc01 · SSH :22, svc.shuffle</text>
+<text x="1310.0" y="453.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">(Opérateurs de compte) : Disable-ADAccount</text>
+<rect x="1105" y="486" width="410" height="66" rx="4.0" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+<text x="1310.0" y="515.4" text-anchor="middle" font-size="12" font-weight="bold" fill="#BF360C">fw-01 · API :443, clé svc-shuffle</text>
+<text x="1310.0" y="531.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">IP externe ajoutée à BLOCKLIST_SOAR</text>
+<rect x="40" y="630" width="1520" height="140" rx="8.4" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="800.0" y="679.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Exécution réelle du 6 novembre 2026 (heure de Paris), incident c_dupont</text>
+<text x="800.0" y="696.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">18:16:11 export de la table clients · 18:16:26 alerte EQL · 18:16:35 alerte Threshold</text>
+<text x="800.0" y="713.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">18:17:13 case ouvert (nœud 2) · 18:17:16 rôle c_dupont en NOLOGIN · 18:17:17 c.dupont désactivé dans l'AD (4725 par svc.shuffle)</text>
+<text x="800.0" y="729.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">18:17:19 alertes acquittées (nœud 4) · détection en 15 s, confinement 50 s après la première alerte, sans intervention humaine</text>
+<rect x="40" y="800" width="1520" height="120" rx="7.2" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="800.0" y="839.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Garde-fous</text>
+<text x="800.0" y="856.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">mode simulation : variable actions_actives = non (case et acquittement, sans confinement) · IP interne jamais bloquée</text>
+<text x="800.0" y="873.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">rôle postgres et comptes svc_* protégés · comptes administrateurs AD hors de portée (Opérateurs de compte)</text>
+<text x="800.0" y="889.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">secrets dans les variables du workflow, pas dans le code · remise à zéro après une démo : reinitialiser_demo.sh</text>
+<text x="155.0" y="282.2" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">→ flux du workflow</text>
+<text x="155.0" y="304.2" text-anchor="middle" font-size="12" font-weight="normal" fill="#00695C">→ appels API / SSH</text>
+<polyline points="230,198 290,198" fill="none" stroke="#0B64DD" stroke-width="2" marker-end="url(#a-ctrl)"/>
+<polyline points="520,198 580,198" fill="none" stroke="#0B64DD" stroke-width="2" marker-end="url(#a-ctrl)"/>
+<polyline points="750,198 810,198" fill="none" stroke="#0B64DD" stroke-width="2" marker-end="url(#a-ctrl)"/>
+<polyline points="1040,198 1090,198" fill="none" stroke="#0B64DD" stroke-width="2" marker-end="url(#a-ctrl)"/>
+<polyline points="1320,198 1370,198" fill="none" stroke="#0B64DD" stroke-width="2" marker-end="url(#a-ctrl)"/>
+<polyline points="665,238 665,300" fill="none" stroke="#546E7A" stroke-width="2" stroke-dasharray="8 5" marker-end="url(#a-net)"/>
+<polyline points="405,246 405,425" fill="none" stroke="#00897B" stroke-width="2" marker-start="url(#a-data)" marker-end="url(#a-data)"/>
+<polyline points="925,246 925,425" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1548,246 1548,600 1005,600 1005,545" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="1205,246 1205,330" fill="none" stroke="#8E24AA" stroke-width="2" marker-end="url(#a-soar)"/>
+</svg>
