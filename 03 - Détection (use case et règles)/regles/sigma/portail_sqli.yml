@@ -1,0 +1,49 @@
+title: Injection SQL sur le portail clients (requete)
+id: 4b8e2f60-1c3d-4a9e-b7f2-5d6a0c9e1b44
+name: azur_bank_requete_sqli
+status: experimental
+description: Requete du portail web contenant une charge d'injection SQL ou l'empreinte de sqlmap. Regle de base pour la correlation ci-dessous.
+author: Azur Bank SOC
+date: 2026-11-06
+logsource:
+  category: webserver
+  product: nginx
+detection:
+  outil:
+    user_agent.original|contains: sqlmap
+  charge:
+    url.original|contains:
+      - UNION
+      - SELECT
+      - '%27'
+      - DROP
+      - '%20OR%20'
+      - '--'
+  condition: outil or charge
+falsepositives:
+  - Scanner de vulnerabilites autorise
+level: medium
+generate: false
+tags:
+  - attack.initial-access
+  - attack.t1190
+---
+title: Injection SQL repetee sur le portail clients
+id: 7d1f3a92-5e60-4b2c-8a4d-e9f0b1c2d355
+status: experimental
+description: Au moins 10 requetes d'injection SQL depuis une meme IP en 5 minutes.
+author: Azur Bank SOC
+date: 2026-11-06
+correlation:
+  type: event_count
+  rules:
+    - azur_bank_requete_sqli
+  group-by:
+    - source.ip
+  timespan: 5m
+  condition:
+    gte: 10
+level: high
+tags:
+  - attack.initial-access
+  - attack.t1190

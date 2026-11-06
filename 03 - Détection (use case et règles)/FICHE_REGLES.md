@@ -27,6 +27,8 @@ Azur Bank, base `core_clients` (PostgreSQL + pgaudit, zone Datacenter), Elastic 
 | `regles/elastic/esql_lecture_puis_export.json` | ES\|QL | > 500 lectures `clients` puis au moins un export, même compte, en 10 min | critical |
 | `regles/elastic-basic/` | Mêmes règles | Variante pour l'instance on-prem en licence Basic (sans suppression d'alertes) | |
 | `regles/elastic-basic/query_swift_virement_anormal.json` + `regles/sigma/swift_virement_anormal.yml` | Query (KQL) + SIGMA | MT103/MT202 sortant ≥ 1 M EUR, correspondant hors référentiel ou hors heures ouvrées (passerelle SWIFT via Logstash) | critical |
+| `regles/elastic-basic/threshold_portail_sqli.json` + `regles/sigma/portail_sqli.yml` | Threshold (KQL) + SIGMA (corrélation `event_count`) | ≥ 10 requêtes nginx avec charge d'injection SQL ou `sqlmap` par `source.ip` en 5 min (T1190) | high |
+| `regles/elastic-basic/eql_bastion_brute_force.json` + `regles/sigma/bastion_brute_force.yml` | EQL sequence + SIGMA (corrélation `temporal_ordered`) | ≥ 10 échecs puis un succès d'authentification, même IP et même compte, en 10 min (T1110.001) | critical |
 
 Requête KQL de la règle Threshold :
 
@@ -87,3 +89,27 @@ Pour une démo en direct : `python3 ../../scripts/gen_logs_banque.py --attack-no
 - Le champ `object` n'est pas un champ ECS. On pourrait le remplacer par `db.table` ou un champ personnalisé `azurbank.db.object`.
 - Exclure les comptes de service batch (CRM, reporting) par une exception, pour limiter les faux positifs.
 - Évolution possible : remplacer le seuil fixe par une règle Machine Learning sur le volume de lecture habituel de chaque compte.
+
+## Règles bonus : injection SQL et force brute (6 novembre)
+
+Les deux scénarios des données de démonstration (`sqlmap` depuis 45.146.165.37 sur le portail, force brute depuis
+91.240.118.172 sur `adm.fontaine`) ont maintenant leur règle, et les deux règles visent aussi les vraies données du lab :
+`logs-nginx.access-*` (intégration Nginx de web-portail-01) et `logs-system.auth-*` (sshd de bastion-01).
+
+Tests sur le lab, depuis bastion-01 :
+
+```bash
+# 16 requêtes d'injection avec l'empreinte de sqlmap
+UA="sqlmap/1.8.11#stable (https://sqlmap.org)"
+for p in "compte/operations?id=1%27%20OR%20%271%27=%271" "api/v1/comptes?id=1%20UNION%20SELECT%20null,iban,null%20FROM%20clients--" \
+         "login?user=admin%27--" "compte/solde?id=1;DROP%20TABLE%20clients"; do
+  for i in 1 2 3 4; do curl -s -o /dev/null -A "$UA" "http://10.30.0.10/$p"; done; done
+# 12 mauvais mots de passe puis le bon, en SSH sur adm.fontaine
+for i in $(seq 1 12); do SSHPASS=mauvais$i sshpass -e ssh -o PubkeyAuthentication=no adm.fontaine@127.0.0.1 true; done
+sshpass -p '<MOT_DE_PASSE_LAB>' ssh -o PubkeyAuthentication=no adm.fontaine@127.0.0.1 true
+```
+
+Résultat : une alerte « Injection SQL sur le portail clients » sur 10.0.5.10, et une alerte « Force brute réussie sur le
+bastion » sur `adm.fontaine` (avec ses 11 événements « building block »). OpenSSH 10 (Debian 13) pénalise une IP après
+plusieurs échecs (`PerSourcePenalties`) : la connexion réussie peut demander une deuxième tentative quelques secondes plus tard.
+C'est d'ailleurs une bonne protection à citer face à la force brute.

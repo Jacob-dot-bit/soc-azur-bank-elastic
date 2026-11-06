@@ -1,0 +1,75 @@
+title: Echec d'authentification sur le bastion
+id: 2a6c9d14-8f3b-4e71-9c05-b4e7a1d8f266
+name: azur_bank_bastion_echec
+status: experimental
+description: Echec d'authentification SSH sur bastion-01.
+author: Azur Bank SOC
+date: 2026-11-06
+logsource:
+  product: linux
+  service: auth
+detection:
+  selection:
+    host.name: bastion-01
+    event.outcome: failure
+  condition: selection
+level: low
+generate: false
+---
+title: Succes d'authentification sur le bastion
+id: 5e0b7f38-2d94-4c6a-a1e3-c8f2d4b9e077
+name: azur_bank_bastion_succes
+status: experimental
+description: Authentification SSH reussie sur bastion-01.
+author: Azur Bank SOC
+date: 2026-11-06
+logsource:
+  product: linux
+  service: auth
+detection:
+  selection:
+    host.name: bastion-01
+    event.outcome: success
+  condition: selection
+level: informational
+generate: false
+---
+title: Echecs repetes sur le bastion
+id: 8c3e1a57-6b02-4d9f-b8a6-f1d0e2c3a488
+name: azur_bank_bastion_echecs_repetes
+status: experimental
+description: Au moins 10 echecs pour un meme compte et une meme IP en 10 minutes.
+author: Azur Bank SOC
+date: 2026-11-06
+correlation:
+  type: event_count
+  rules:
+    - azur_bank_bastion_echec
+  group-by:
+    - source.ip
+    - user.name
+  timespan: 10m
+  condition:
+    gte: 10
+generate: false
+level: medium
+---
+title: Force brute reussie sur le bastion
+id: 9f4d2b68-7c13-4e8a-a9b7-0a1e3f4c5d99
+status: experimental
+description: Echecs repetes puis un succes, meme compte et meme IP, en 10 minutes (mot de passe devine).
+author: Azur Bank SOC
+date: 2026-11-06
+correlation:
+  type: temporal_ordered
+  rules:
+    - azur_bank_bastion_echecs_repetes
+    - azur_bank_bastion_succes
+  group-by:
+    - source.ip
+    - user.name
+  timespan: 10m
+level: critical
+tags:
+  - attack.credential-access
+  - attack.t1110.001

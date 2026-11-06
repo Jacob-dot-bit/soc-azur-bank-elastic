@@ -1,0 +1,61 @@
+{
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "enabled": true,
+  "max_signals": 100,
+  "to": "now",
+  "interval": "1m",
+  "rule_id": "azur-bank-portail-sqli",
+  "name": "Injection SQL sur le portail clients",
+  "type": "threshold",
+  "language": "kuery",
+  "description": "Au moins 10 requêtes du portail web (nginx) portant une charge d'injection SQL ou l'empreinte d'un outil d'attaque (sqlmap), depuis une même IP en 5 minutes. Le portail donne accès aux comptes clients : une injection réussie mène directement à la base.",
+  "query": "event.dataset : \"nginx.access\" and (user_agent.original : (*sqlmap* or *Sqlmap*) or url.original : (*UNION* or *union* or *SELECT* or *select* or *%27* or *DROP* or *drop* or *%20OR%20* or *--*))",
+  "threshold": {
+    "field": [
+      "source.ip"
+    ],
+    "value": 10
+  },
+  "from": "now-6m",
+  "index": [
+    "logs-nginx.access-*"
+  ],
+  "severity": "high",
+  "risk_score": 73,
+  "false_positives": [
+    "Scanner de vulnérabilités autorisé (campagne de pentest planifiée) : exception sur son IP."
+  ],
+  "note": "## Triage\n1. IP source (`source.ip`) : réputation, pays, déjà vue ?\n2. Codes retour (`http.response.status_code`) : des 200 sur des charges d'injection = injection possiblement réussie.\n3. Chercher dans `logs-db.audit-*` des requêtes anormales juste après (lecture massive, erreurs SQL).\n\n## Réponse\n- Bloquer l'IP sur fw-01 (alias BLOCKLIST_SOAR, automatisable par Shuffle).\n- Si des 200 : ouvrir un case critique, vérifier l'intégrité de la base, corriger le paramètre vulnérable.\n",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0001",
+        "name": "Initial Access",
+        "reference": "https://attack.mitre.org/tactics/TA0001/"
+      },
+      "technique": [
+        {
+          "id": "T1190",
+          "name": "Exploit Public-Facing Application",
+          "reference": "https://attack.mitre.org/techniques/T1190/",
+          "subtechnique": []
+        }
+      ]
+    }
+  ],
+  "references": [
+    "https://attack.mitre.org/techniques/T1190/",
+    "https://owasp.org/www-community/attacks/SQL_Injection"
+  ],
+  "tags": [
+    "Azur Bank",
+    "Portail clients",
+    "DMZ",
+    "PCI DSS 6.4",
+    "Licence Basic"
+  ]
+}

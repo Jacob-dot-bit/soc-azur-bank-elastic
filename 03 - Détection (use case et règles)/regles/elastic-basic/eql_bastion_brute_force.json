@@ -1,0 +1,62 @@
+{
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "enabled": true,
+  "max_signals": 100,
+  "to": "now",
+  "interval": "1m",
+  "rule_id": "azur-bank-bastion-brute-force",
+  "name": "Force brute réussie sur le bastion",
+  "type": "eql",
+  "language": "eql",
+  "description": "Séquence sur une même IP et un même compte, en moins de 10 minutes : au moins 10 échecs d'authentification puis un succès. Signe d'un mot de passe deviné sur le bastion, seul point d'entrée vers la zone des serveurs.",
+  "query": "sequence by source.ip, user.name with maxspan=10m\n  [authentication where event.outcome == \"failure\"] with runs=10\n  [authentication where event.outcome == \"success\"]",
+  "from": "now-11m",
+  "index": [
+    "logs-system.auth-*",
+    "logs-bastion.auth-*"
+  ],
+  "severity": "critical",
+  "risk_score": 91,
+  "false_positives": [
+    "Utilisateur qui se trompe plusieurs fois de mot de passe puis réussit : vérifier avec lui (rappel téléphonique)."
+  ],
+  "note": "## Triage\n1. `source.ip` interne ou externe ? Le bastion n'est pas censé être exposé.\n2. Le compte (`user.name`) a-t-il le MFA enrôlé ? (pam_google_authenticator nullok : sans TOTP, le mot de passe suffit).\n3. Que fait la session après le succès (commandes, rebond vers la zone DC, `logs-db.audit-*`) ?\n\n## Réponse\n- Désactiver le compte AD, couper la session, bloquer l'IP source sur fw-01.\n- Imposer le TOTP (retirer `nullok`) et changer le mot de passe.\n",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0006",
+        "name": "Credential Access",
+        "reference": "https://attack.mitre.org/tactics/TA0006/"
+      },
+      "technique": [
+        {
+          "id": "T1110",
+          "name": "Brute Force",
+          "reference": "https://attack.mitre.org/techniques/T1110/",
+          "subtechnique": [
+            {
+              "id": "T1110.001",
+              "name": "Password Guessing",
+              "reference": "https://attack.mitre.org/techniques/T1110/001/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "references": [
+    "https://attack.mitre.org/techniques/T1110/001/"
+  ],
+  "tags": [
+    "Azur Bank",
+    "Bastion",
+    "Accès privilégiés",
+    "PCI DSS 8.3",
+    "SWIFT CSP 4.1",
+    "Licence Basic"
+  ]
+}
