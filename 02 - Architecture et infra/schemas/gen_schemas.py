@@ -198,82 +198,88 @@ class Diagram:
 # =====================================================================
 def archi():
     g = Diagram("architecture-hybride", 1600, 900)
-    g.text("t", 40, 18, 1520, 40,
-           ["Azur Bank · Architecture SIEM hybride : sites On-Prem + Elastic Cloud"],
-           "title", size=24)
+    g.text("t", 40, 14, 1520, 40,
+           ["Azur Bank · Architecture SIEM hybride : le sensible reste sur site, le volume part dans le cloud"],
+           "title", size=23)
 
     # --- On-prem
-    g.group("onprem", 40, 80, 720, 670, "ON-PREM · AZUR BANK (1 500 collaborateurs, multi-sites)", "onprem")
-    g.group("dcp", 60, 120, 680, 360, "Siège · Datacenter", "site", size=13)
-    g.box("srvdc", 80, 160, 200, 80, ["srv-dc01", "Active Directory", "Security + Sysmon"], "dc")
-    g.box("db", 300, 160, 200, 80, ["db-clients-01", "PostgreSQL + pgaudit", "base clients (use case)"], "dc")
-    g.box("web", 520, 160, 200, 80, ["web-portail-01", "Portail clients nginx", "DMZ · access logs"], "dmz")
-    g.box("bastion", 80, 270, 200, 80, ["bastion-01", "SSH + MFA (zone ADM)", "collecteur syslog"], "adm")
-    g.box("swift", 300, 270, 200, 80, ["Passerelle SWIFT / SEPA", "syslog → Logstash (simulée)", "SWIFT CSP"], "opt")
-    g.box("fw", 520, 270, 200, 80, ["fw-01 · OPNsense", "filtrage inter-zones", "seule sortie Internet"], "fw")
-    g.box("siem", 80, 365, 640, 100,
-          ["Zone SOC · siem-elk-01 : Fleet Server + Logstash + Elasticsearch + Kibana Security",
-           "licence Basic gratuite · les agents (pol-windows, pol-linux-*) parlent à Fleet sur site (8220/9200)",
-           "collecte, stockage chaud et détection dans la banque · seul ADM accède à la base clients"],
-          "soc", size=12)
+    g.group("onprem", 40, 70, 860, 680, "ON-PREM · AZUR BANK (siège + N agences reliées en VPN IPsec)", "onprem")
 
-    g.group("agences", 60, 500, 330, 230, "Agences (N sites)", "site", size=13)
-    g.box("ws", 80, 560, 290, 80, ["Postes guichetiers Windows 11", "Elastic Defend (EDR) + Sysmon", "agent : pol-windows"], "lan")
-    g.text("vpn", 80, 650, 290, 60, ["Lien VPN IPsec agence → siège", "les logs sortent par fw-01"], "note", size=12)
+    g.group("crit", 60, 110, 400, 260, "Données critiques : ne quittent jamais la banque", "site", size=13)
+    g.box("db", 75, 150, 180, 95, ["db-clients-01", "base clients", "audit pgaudit (use case)"], "dc", size=12)
+    g.box("swift", 265, 150, 180, 95, ["Passerelle SWIFT / SEPA", "virements, MT103", "SWIFT CSP"], "dc", size=12)
+    g.box("cde", 75, 260, 180, 95, ["Zone cartes (CDE)", "monétique, PAN", "PCI DSS"], "dc", size=12)
+    g.box("adbas", 265, 260, 180, 95, ["AD + bastion-01", "comptes, accès", "privilégiés (MFA)"], "adm", size=12)
 
-    g.group("soar", 410, 500, 330, 230, "SOAR phase 2 (déployé dans le lab)", "site", size=13)
-    g.box("shuffle", 430, 560, 290, 80, ["Shuffle (on-prem, zone SOC)", "playbook : case Kibana, compte base", "et AD désactivés, IP bloquée sur fw-01"], "soc")
-    g.text("soarn", 430, 650, 290, 60, ["lit les alertes par l'API toutes les minutes", "(licence Basic : pas de webhook)"], "note", size=12)
+    g.group("vol", 480, 110, 400, 260, "Sources volumineuses, moins sensibles", "site", size=13)
+    g.box("web", 495, 150, 180, 95, ["web-portail-01", "DMZ · nginx / WAF", "portail clients"], "dmz", size=12)
+    g.box("fw", 685, 150, 180, 95, ["fw-01 · OPNsense", "flux inter-zones", "seule sortie Internet"], "fw", size=12)
+    g.box("ws", 495, 260, 180, 95, ["Postes des agences", "Elastic Defend (EDR)", "+ Sysmon"], "lan", size=12)
+    g.box("proxy", 685, 260, 180, 95, ["Proxy, DNS, DHCP", "VPN, Wi-Fi", "(cible)"], "opt", size=12)
 
-    # --- Lien
-    g.text("link", 770, 380, 145, 110,
-           ["HTTPS 443", "sortant uniquement", "TLS chiffré", "aucun port entrant", "côté banque"],
-           "notec", size=12)
+    g.group("soc", 60, 420, 820, 315, "Zone SOC (10.40.0.0/24)", "site", size=13)
+    g.box("siem", 80, 460, 380, 150,
+          ["siem-elk-01 · cluster on-prem",
+           "Fleet Server : pilote tous les agents",
+           "Elasticsearch : données critiques, 12 mois",
+           "Kibana Security : règles + console unique",
+           "des analystes (local + cloud via CCS)"], "soc", size=12)
+    g.box("ls", 500, 460, 360, 150,
+          ["Logstash · seule sortie vers le cloud",
+           "envoie : logs moins sensibles + alertes",
+           "retire : PAN, IBAN, noms, montants",
+           "file persistante : rien n'est perdu",
+           "si le lien Internet tombe"], "fw", size=12)
+    g.box("shuffle", 80, 630, 380, 85, ["SOAR Shuffle (phase 2)", "lit les alertes, ouvre le case,", "verrouille compte base + AD, bloque l'IP"], "soc", size=12)
+    g.text("anan", 500, 630, 360, 85,
+           ["Analystes N1 / N2 : une seule console,",
+            "une recherche couvre les deux clusters,",
+            "sans copier les données"], "note", size=12)
 
     # --- Cloud
-    g.group("cloud", 920, 80, 640, 470, "ELASTIC CLOUD SERVERLESS · projet Security", "cloud")
-    g.box("fleet", 950, 130, 280, 70, ["Fleet (managé)", "politiques et mises à jour des agents"], "cnode")
-    g.box("ingest", 950, 240, 280, 70, ["Ingest pipelines", "normalisation ECS (ex. pgaudit → dissect)"], "cnode")
-    g.box("es", 950, 350, 280, 90, ["Elasticsearch", "data streams logs-*-banque", "stockage et calcul autoscalés"], "cnode")
-    g.box("detect", 1260, 120, 280, 100, ["Moteur de détection", "règles Threshold · EQL · ES|QL", "SIGMA converties", "mapping MITRE ATT&CK"], "soc")
-    g.box("cases", 1260, 250, 280, 70, ["Alerts → Cases", "tri N1/N2, 5W, timeline"], "soc")
-    g.box("wf", 1260, 350, 280, 70, ["Workflows (SOAR)", "enrichissement, notification"], "soc")
-    g.box("dash", 1260, 450, 280, 70, ["Dashboards Kibana Lens", "vue SOC et vue COMEX"], "soc")
+    g.group("cloud", 1040, 70, 520, 450, "ELASTIC CLOUD (région UE)", "cloud")
+    g.box("ces", 1065, 115, 470, 110,
+          ["Elasticsearch cloud · autoscalé",
+           "logs web, firewall, postes, réseau (le gros du volume)",
+           "copie des alertes on-prem (survit à une panne du site)"], "cnode", size=12)
+    g.box("cdet", 1065, 245, 225, 110, ["Règles sur les", "données cloud", "(SQLi, brute force,", "EDR)"], "soc", size=12)
+    g.box("cml", 1310, 245, 225, 110, ["Rétention longue", "à bas coût", "(niveaux froid / gelé)"], "cnode", size=12)
+    g.box("cdash", 1065, 375, 470, 120, ["Dashboards direction (COMEX)", "posture, incidents par criticité, MTTD / MTTR",
+                                          "consultables hors du réseau de la banque", "sans exposer aucune donnée client"], "soc", size=12)
 
-    # --- Utilisateurs
-    g.group("usr", 920, 580, 640, 170, "Accès Kibana (SSO + RBAC, HTTPS)", "users", size=13)
-    g.box("ana", 950, 630, 280, 70, ["Analystes SOC N1 / N2", "triage, investigation"], "node")
-    g.box("comex", 1260, 630, 280, 70, ["Direction / COMEX", "KPI risque, conformité"], "node")
+    # --- Pourquoi pas de duplication
+    g.box("nodup", 1040, 545, 520, 205,
+          ["Pourquoi on ne duplique pas tout dans le cloud",
+           "1. Coût : chaque Go stocké deux fois est payé deux fois",
+           "2. Une seule source de vérité : pas de preuve divergente en audit",
+           "3. Périmètre PCI DSS / SWIFT CSP réduit au seul site",
+           "4. Le CCS donne déjà la vue unique : on interroge,",
+           "    on ne recopie pas"], "pillar", size=13, align="left")
 
     # --- Flux
-    g.edge("e_ctrl", "fw", "fleet", [(720, 295), (840, 295), (840, 165), (950, 165)], "ctrl", dashed=True, both=True)
-    g.edge("e_data", "fw", "ingest", [(720, 330), (880, 330), (880, 275), (950, 275)], "data")
-    g.edge("e_vpn", "ws", "dcp", [(300, 560), (300, 480)], "net", both=True)
-    g.edge("e_soar", "shuffle", "cloud", [(720, 600), (850, 600), (850, 530), (920, 530)], "soar", dashed=True)
-    g.edge("e_ing", "ingest", "es", [(1090, 310), (1090, 350)], "data")
-    g.edge("e_det", "es", "detect", [(1230, 380), (1245, 380), (1245, 170), (1260, 170)], "data")
-    g.edge("e_cas", "detect", "cases", [(1400, 220), (1400, 250)], "data")
-    g.edge("e_wf", "cases", "wf", [(1400, 320), (1400, 350)], "data")
-    g.edge("e_dash", "es", "dash", [(1090, 440), (1090, 485), (1260, 485)], "data")
-    g.edge("e_ana", "ana", "cloud", [(1000, 630), (1000, 550)], "user")
-    g.edge("e_comex", "comex", "dash", [(1400, 630), (1400, 520)], "user")
-
-    g.text("lg1", 760, 120, 75, 40, ["contrôle", "(Fleet)"], "notec", size=11)
-    g.text("lg2", 760, 335, 120, 36, ["données (logs)"], "notedata", size=11)
+    g.edge("e_crit", "crit", "siem", [(260, 370), (260, 460)], "data")
+    g.edge("e_vol", "vol", "ls", [(680, 370), (680, 460)], "data")
+    g.edge("e_alert", "siem", "ls", [(460, 560), (500, 560)], "data")
+    g.text("l_alert", 455, 530, 50, 26, ["alertes"], "notedata", size=10)
+    g.edge("e_out", "ls", "ces", [(860, 520), (915, 520), (915, 170), (1065, 170)], "data")
+    g.text("l_out", 922, 190, 92, 70, ["HTTPS 443", "sortant,", "filtré"], "notedata", size=11)
+    g.edge("e_ccs", "siem", "cloud", [(400, 610), (400, 622), (1020, 622), (1020, 205), (1065, 205)], "ctrl", dashed=True)
+    g.text("l_ccs", 922, 500, 95, 110, ["Cross-Cluster", "Search", "requêtes à la", "demande,", "TLS sortant"], "notec", size=11)
+    g.edge("e_soar", "shuffle", "siem", [(150, 630), (150, 612)], "soar", both=True)
 
     # --- Piliers
-    g.box("p1", 40, 770, 500, 110, ["Stable",
-          "Fleet Server on-prem : la collecte continue même sans le cloud",
-          "partie Cloud managée par l'éditeur (SaaS)",
-          "agents pilotés via Fleet, aucun flux entrant depuis Internet"], "pillar", size=13)
-    g.box("p2", 550, 770, 500, 110, ["Scalable",
-          "stockage et calcul autoscalés selon le volume",
-          "nouveau site = installer l'agent + jeton d'enrôlement",
-          "une politique par rôle, réutilisée partout"], "pillar", size=13)
-    g.box("p3", 1060, 770, 500, 110, ["Conforme",
-          "TLS en transit, chiffrement au repos, SSO + RBAC",
-          "rétention 12 mois des journaux (PCI DSS 10.5.1)",
-          "production : région UE (RGPD, DORA)"], "pillar", size=13)
+    g.box("p1", 40, 770, 500, 115, ["Stable",
+          "collecte, stockage et détection du critique sur site",
+          "une coupure cloud n'arrête ni la collecte ni la détection",
+          "un seul flux sortant, aucun port entrant"], "pillar", size=13)
+    g.box("p2", 550, 770, 500, 115, ["Scalable",
+          "les sources qui grossissent le plus partent dans le cloud",
+          "le site n'est dimensionné que pour le périmètre critique",
+          "nouveau site = agent + jeton d'enrôlement Fleet"], "pillar", size=13)
+    g.box("p3", 1060, 770, 500, 115, ["Conforme",
+          "cartes, clients et SWIFT restent dans la banque",
+          "filtrage à la sortie, TLS, RBAC, région UE (RGPD, DORA)",
+          "12 mois de rétention (PCI DSS 10.5.1)"], "pillar", size=13)
     return g
 
 

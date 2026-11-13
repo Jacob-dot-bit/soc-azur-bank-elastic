@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
 <defs>
 <marker id="a-data" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00897B"/></marker>
 <marker id="a-ctrl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0B64DD"/></marker>
@@ -7,121 +7,121 @@
 <marker id="a-user" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#607D8B"/></marker>
 </defs>
 <rect width="1600" height="900" fill="#FFFFFF"/>
-<text x="800.0" y="46.4" text-anchor="middle" font-size="24" font-weight="bold" fill="#1B2631">Azur Bank · Architecture SIEM hybride : sites On-Prem + Elastic Cloud</text>
-<rect x="40" y="80" width="720" height="670" rx="40.2" fill="#F4F6F8" stroke="#5B6770" stroke-width="2"/>
-<text x="52" y="105.0" text-anchor="start" font-size="15" font-weight="bold" fill="#263238">ON-PREM · AZUR BANK (1 500 collaborateurs, multi-sites)</text>
-<rect x="60" y="120" width="680" height="360" rx="21.6" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
-<text x="72" y="143.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Siège · Datacenter</text>
-<rect x="80" y="160" width="200" height="80" rx="4.8" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
-<text x="180.0" y="187.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#7A4A00">srv-dc01</text>
-<text x="180.0" y="204.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">Active Directory</text>
-<text x="180.0" y="221.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">Security + Sysmon</text>
-<rect x="300" y="160" width="200" height="80" rx="4.8" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
-<text x="400.0" y="187.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#7A4A00">db-clients-01</text>
-<text x="400.0" y="204.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">PostgreSQL + pgaudit</text>
-<text x="400.0" y="221.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#7A4A00">base clients (use case)</text>
-<rect x="520" y="160" width="200" height="80" rx="4.8" fill="#FDEEEE" stroke="#C62828" stroke-width="1.5"/>
-<text x="620.0" y="187.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#8E1B1B">web-portail-01</text>
-<text x="620.0" y="204.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#8E1B1B">Portail clients nginx</text>
-<text x="620.0" y="221.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#8E1B1B">DMZ · access logs</text>
-<rect x="80" y="270" width="200" height="80" rx="4.8" fill="#F1ECFA" stroke="#5E35B1" stroke-width="1.5"/>
-<text x="180.0" y="297.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#3E2380">bastion-01</text>
-<text x="180.0" y="314.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#3E2380">SSH + MFA (zone ADM)</text>
-<text x="180.0" y="331.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#3E2380">collecteur syslog</text>
-<rect x="300" y="270" width="200" height="80" rx="4.8" fill="#FFFFFF" stroke="#78909C" stroke-width="1.5" stroke-dasharray="6 4"/>
-<text x="400.0" y="297.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#455A64">Passerelle SWIFT / SEPA</text>
-<text x="400.0" y="314.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">syslog → Logstash (simulée)</text>
-<text x="400.0" y="331.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">SWIFT CSP</text>
-<rect x="520" y="270" width="200" height="80" rx="4.8" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
-<text x="620.0" y="297.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#BF360C">fw-01 · OPNsense</text>
-<text x="620.0" y="314.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#BF360C">filtrage inter-zones</text>
-<text x="620.0" y="331.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#BF360C">seule sortie Internet</text>
-<rect x="80" y="365" width="640" height="100" rx="6.0" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
-<text x="400.0" y="403.6" text-anchor="middle" font-size="12" font-weight="bold" fill="#004D40">Zone SOC · siem-elk-01 : Fleet Server + Logstash + Elasticsearch + Kibana Security</text>
-<text x="400.0" y="419.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">licence Basic gratuite · les agents (pol-windows, pol-linux-*) parlent à Fleet sur site (8220/9200)</text>
-<text x="400.0" y="434.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">collecte, stockage chaud et détection dans la banque · seul ADM accède à la base clients</text>
-<rect x="60" y="500" width="330" height="230" rx="13.8" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
-<text x="72" y="523.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Agences (N sites)</text>
-<rect x="80" y="560" width="290" height="80" rx="4.8" fill="#EAF6EC" stroke="#2E7D32" stroke-width="1.5"/>
-<text x="225.0" y="587.6" text-anchor="middle" font-size="13" font-weight="bold" fill="#1B5E20">Postes guichetiers Windows 11</text>
-<text x="225.0" y="604.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#1B5E20">Elastic Defend (EDR) + Sysmon</text>
-<text x="225.0" y="621.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#1B5E20">agent : pol-windows</text>
-<text x="225.0" y="676.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">Lien VPN IPsec agence → siège</text>
-<text x="225.0" y="692.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">les logs sortent par fw-01</text>
-<rect x="410" y="500" width="330" height="230" rx="13.8" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
-<text x="422" y="523.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">SOAR phase 2 (déployé dans le lab)</text>
-<rect x="430" y="560" width="290" height="80" rx="4.8" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
-<text x="575.0" y="587.6" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Shuffle (on-prem, zone SOC)</text>
-<text x="575.0" y="604.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">playbook : case Kibana, compte base</text>
-<text x="575.0" y="621.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">et AD désactivés, IP bloquée sur fw-01</text>
-<text x="575.0" y="676.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">lit les alertes par l'API toutes les minutes</text>
-<text x="575.0" y="692.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">(licence Basic : pas de webhook)</text>
-<text x="842.5" y="408.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">HTTPS 443</text>
-<text x="842.5" y="423.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">sortant uniquement</text>
-<text x="842.5" y="439.2" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">TLS chiffré</text>
-<text x="842.5" y="454.8" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">aucun port entrant</text>
-<text x="842.5" y="470.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">côté banque</text>
-<rect x="920" y="80" width="640" height="470" rx="28.2" fill="#E8F1FD" stroke="#0B64DD" stroke-width="2"/>
-<text x="932" y="105.0" text-anchor="start" font-size="15" font-weight="bold" fill="#0B3D91">ELASTIC CLOUD SERVERLESS · projet Security</text>
-<rect x="950" y="130" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
-<text x="1090.0" y="161.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#0B3D91">Fleet (managé)</text>
-<text x="1090.0" y="178.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">politiques et mises à jour des agents</text>
-<rect x="950" y="240" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
-<text x="1090.0" y="271.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#0B3D91">Ingest pipelines</text>
-<text x="1090.0" y="288.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">normalisation ECS (ex. pgaudit → dissect)</text>
-<rect x="950" y="350" width="280" height="90" rx="5.4" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
-<text x="1090.0" y="382.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#0B3D91">Elasticsearch</text>
-<text x="1090.0" y="399.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">data streams logs-*-banque</text>
-<text x="1090.0" y="416.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#0B3D91">stockage et calcul autoscalés</text>
-<rect x="1260" y="120" width="280" height="100" rx="6.0" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
-<text x="1400.0" y="149.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Moteur de détection</text>
-<text x="1400.0" y="166.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">règles Threshold · EQL · ES|QL</text>
-<text x="1400.0" y="183.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">SIGMA converties</text>
-<text x="1400.0" y="199.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">mapping MITRE ATT&amp;CK</text>
-<rect x="1260" y="250" width="280" height="70" rx="4.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
-<text x="1400.0" y="281.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Alerts → Cases</text>
-<text x="1400.0" y="298.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">tri N1/N2, 5W, timeline</text>
-<rect x="1260" y="350" width="280" height="70" rx="4.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
-<text x="1400.0" y="381.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Workflows (SOAR)</text>
-<text x="1400.0" y="398.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">enrichissement, notification</text>
-<rect x="1260" y="450" width="280" height="70" rx="4.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
-<text x="1400.0" y="481.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#004D40">Dashboards Kibana Lens</text>
-<text x="1400.0" y="498.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#004D40">vue SOC et vue COMEX</text>
-<rect x="920" y="580" width="640" height="170" rx="10.2" fill="#FAFAFA" stroke="#90A4AE" stroke-width="2" stroke-dasharray="6 4"/>
-<text x="932" y="603.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Accès Kibana (SSO + RBAC, HTTPS)</text>
-<rect x="950" y="630" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#5B6770" stroke-width="1.5"/>
-<text x="1090.0" y="661.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Analystes SOC N1 / N2</text>
-<text x="1090.0" y="678.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">triage, investigation</text>
-<rect x="1260" y="630" width="280" height="70" rx="4.2" fill="#FFFFFF" stroke="#5B6770" stroke-width="1.5"/>
-<text x="1400.0" y="661.1" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Direction / COMEX</text>
-<text x="1400.0" y="678.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">KPI risque, conformité</text>
-<text x="797.5" y="136.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">contrôle</text>
-<text x="797.5" y="151.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">(Fleet)</text>
-<text x="820.0" y="356.9" text-anchor="middle" font-size="11" font-weight="normal" fill="#00695C">données (logs)</text>
-<rect x="40" y="770" width="500" height="110" rx="6.6" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
-<text x="290.0" y="804.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Stable</text>
-<text x="290.0" y="821.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">Fleet Server on-prem : la collecte continue même sans le cloud</text>
-<text x="290.0" y="838.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">partie Cloud managée par l'éditeur (SaaS)</text>
-<text x="290.0" y="854.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">agents pilotés via Fleet, aucun flux entrant depuis Internet</text>
-<rect x="550" y="770" width="500" height="110" rx="6.6" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
-<text x="800.0" y="804.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Scalable</text>
-<text x="800.0" y="821.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">stockage et calcul autoscalés selon le volume</text>
-<text x="800.0" y="838.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">nouveau site = installer l'agent + jeton d'enrôlement</text>
-<text x="800.0" y="854.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">une politique par rôle, réutilisée partout</text>
-<rect x="1060" y="770" width="500" height="110" rx="6.6" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
-<text x="1310.0" y="804.2" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Conforme</text>
-<text x="1310.0" y="821.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">TLS en transit, chiffrement au repos, SSO + RBAC</text>
-<text x="1310.0" y="838.0" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">rétention 12 mois des journaux (PCI DSS 10.5.1)</text>
-<text x="1310.0" y="854.9" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">production : région UE (RGPD, DORA)</text>
-<polyline points="720,295 840,295 840,165 950,165" fill="none" stroke="#0B64DD" stroke-width="2" stroke-dasharray="8 5" marker-start="url(#a-ctrl)" marker-end="url(#a-ctrl)"/>
-<polyline points="720,330 880,330 880,275 950,275" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
-<polyline points="300,560 300,480" fill="none" stroke="#546E7A" stroke-width="2" marker-start="url(#a-net)" marker-end="url(#a-net)"/>
-<polyline points="720,600 850,600 850,530 920,530" fill="none" stroke="#8E24AA" stroke-width="2" stroke-dasharray="8 5" marker-end="url(#a-soar)"/>
-<polyline points="1090,310 1090,350" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
-<polyline points="1230,380 1245,380 1245,170 1260,170" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
-<polyline points="1400,220 1400,250" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
-<polyline points="1400,320 1400,350" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
-<polyline points="1090,440 1090,485 1260,485" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
-<polyline points="1000,630 1000,550" fill="none" stroke="#607D8B" stroke-width="2" marker-end="url(#a-user)"/>
-<polyline points="1400,630 1400,520" fill="none" stroke="#607D8B" stroke-width="2" marker-end="url(#a-user)"/>
-</svg>
+<text x="800.0" y="42.0" text-anchor="middle" font-size="23" font-weight="bold" fill="#1B2631">Azur Bank · Architecture SIEM hybride : le sensible reste sur site, le volume part dans le cloud</text>
+<rect x="40" y="70" width="860" height="680" rx="40.8" fill="#F4F6F8" stroke="#5B6770" stroke-width="2"/>
+<text x="52" y="95.0" text-anchor="start" font-size="15" font-weight="bold" fill="#263238">ON-PREM · AZUR BANK (siège + N agences reliées en VPN IPsec)</text>
+<rect x="60" y="110" width="400" height="260" rx="15.6" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="72" y="133.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Données critiques : ne quittent jamais la banque</text>
+<rect x="75" y="150" width="180" height="95" rx="5.7" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="165.0" y="186.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A4A00">db-clients-01</text>
+<text x="165.0" y="201.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">base clients</text>
+<text x="165.0" y="217.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">audit pgaudit (use case)</text>
+<rect x="265" y="150" width="180" height="95" rx="5.7" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="355.0" y="186.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A4A00">Passerelle SWIFT / SEPA</text>
+<text x="355.0" y="201.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">virements, MT103</text>
+<text x="355.0" y="217.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">SWIFT CSP</text>
+<rect x="75" y="260" width="180" height="95" rx="5.7" fill="#FFF6E5" stroke="#B26A00" stroke-width="1.5"/>
+<text x="165.0" y="296.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A4A00">Zone cartes (CDE)</text>
+<text x="165.0" y="311.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">monétique, PAN</text>
+<text x="165.0" y="327.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#7A4A00">PCI DSS</text>
+<rect x="265" y="260" width="180" height="95" rx="5.7" fill="#F1ECFA" stroke="#5E35B1" stroke-width="1.5"/>
+<text x="355.0" y="296.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#3E2380">AD + bastion-01</text>
+<text x="355.0" y="311.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#3E2380">comptes, accès</text>
+<text x="355.0" y="327.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#3E2380">privilégiés (MFA)</text>
+<rect x="480" y="110" width="400" height="260" rx="15.6" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="492" y="133.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Sources volumineuses, moins sensibles</text>
+<rect x="495" y="150" width="180" height="95" rx="5.7" fill="#FDEEEE" stroke="#C62828" stroke-width="1.5"/>
+<text x="585.0" y="186.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#8E1B1B">web-portail-01</text>
+<text x="585.0" y="201.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#8E1B1B">DMZ · nginx / WAF</text>
+<text x="585.0" y="217.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#8E1B1B">portail clients</text>
+<rect x="685" y="150" width="180" height="95" rx="5.7" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+<text x="775.0" y="186.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#BF360C">fw-01 · OPNsense</text>
+<text x="775.0" y="201.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">flux inter-zones</text>
+<text x="775.0" y="217.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">seule sortie Internet</text>
+<rect x="495" y="260" width="180" height="95" rx="5.7" fill="#EAF6EC" stroke="#2E7D32" stroke-width="1.5"/>
+<text x="585.0" y="296.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#1B5E20">Postes des agences</text>
+<text x="585.0" y="311.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#1B5E20">Elastic Defend (EDR)</text>
+<text x="585.0" y="327.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#1B5E20">+ Sysmon</text>
+<rect x="685" y="260" width="180" height="95" rx="5.7" fill="#FFFFFF" stroke="#78909C" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="775.0" y="296.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#455A64">Proxy, DNS, DHCP</text>
+<text x="775.0" y="311.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#455A64">VPN, Wi-Fi</text>
+<text x="775.0" y="327.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#455A64">(cible)</text>
+<rect x="60" y="420" width="820" height="315" rx="18.9" fill="#FFFFFF" stroke="#90A4AE" stroke-width="2"/>
+<text x="72" y="443.0" text-anchor="start" font-size="13" font-weight="bold" fill="#37474F">Zone SOC (10.40.0.0/24)</text>
+<rect x="80" y="460" width="380" height="150" rx="9.0" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="270.0" y="508.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#004D40">siem-elk-01 · cluster on-prem</text>
+<text x="270.0" y="523.6" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">Fleet Server : pilote tous les agents</text>
+<text x="270.0" y="539.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">Elasticsearch : données critiques, 12 mois</text>
+<text x="270.0" y="554.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">Kibana Security : règles + console unique</text>
+<text x="270.0" y="570.4" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">des analystes (local + cloud via CCS)</text>
+<rect x="500" y="460" width="360" height="150" rx="9.0" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/>
+<text x="680.0" y="508.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#BF360C">Logstash · seule sortie vers le cloud</text>
+<text x="680.0" y="523.6" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">envoie : logs moins sensibles + alertes</text>
+<text x="680.0" y="539.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">retire : PAN, IBAN, noms, montants</text>
+<text x="680.0" y="554.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">file persistante : rien n'est perdu</text>
+<text x="680.0" y="570.4" text-anchor="middle" font-size="11" font-weight="normal" fill="#BF360C">si le lien Internet tombe</text>
+<rect x="80" y="630" width="380" height="85" rx="5.1" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="270.0" y="661.1" text-anchor="middle" font-size="12" font-weight="bold" fill="#004D40">SOAR Shuffle (phase 2)</text>
+<text x="270.0" y="676.7" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">lit les alertes, ouvre le case,</text>
+<text x="270.0" y="692.3" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">verrouille compte base + AD, bloque l'IP</text>
+<text x="680.0" y="661.1" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">Analystes N1 / N2 : une seule console,</text>
+<text x="680.0" y="676.7" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">une recherche couvre les deux clusters,</text>
+<text x="680.0" y="692.3" text-anchor="middle" font-size="12" font-weight="normal" fill="#455A64">sans copier les données</text>
+<rect x="1040" y="70" width="520" height="450" rx="27.0" fill="#E8F1FD" stroke="#0B64DD" stroke-width="2"/>
+<text x="1052" y="95.0" text-anchor="start" font-size="15" font-weight="bold" fill="#0B3D91">ELASTIC CLOUD (région UE)</text>
+<rect x="1065" y="115" width="470" height="110" rx="6.6" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="1300.0" y="158.6" text-anchor="middle" font-size="12" font-weight="bold" fill="#0B3D91">Elasticsearch cloud · autoscalé</text>
+<text x="1300.0" y="174.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">logs web, firewall, postes, réseau (le gros du volume)</text>
+<text x="1300.0" y="189.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">copie des alertes on-prem (survit à une panne du site)</text>
+<rect x="1065" y="245" width="225" height="110" rx="6.6" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1177.5" y="280.8" text-anchor="middle" font-size="12" font-weight="bold" fill="#004D40">Règles sur les</text>
+<text x="1177.5" y="296.4" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">données cloud</text>
+<text x="1177.5" y="312.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">(SQLi, brute force,</text>
+<text x="1177.5" y="327.6" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">EDR)</text>
+<rect x="1310" y="245" width="225" height="110" rx="6.6" fill="#FFFFFF" stroke="#0B64DD" stroke-width="1.5"/>
+<text x="1422.5" y="288.6" text-anchor="middle" font-size="12" font-weight="bold" fill="#0B3D91">Rétention longue</text>
+<text x="1422.5" y="304.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">à bas coût</text>
+<text x="1422.5" y="319.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">(niveaux froid / gelé)</text>
+<rect x="1065" y="375" width="470" height="120" rx="7.2" fill="#E0F7F5" stroke="#00897B" stroke-width="1.5"/>
+<text x="1300.0" y="415.8" text-anchor="middle" font-size="12" font-weight="bold" fill="#004D40">Dashboards direction (COMEX)</text>
+<text x="1300.0" y="431.4" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">posture, incidents par criticité, MTTD / MTTR</text>
+<text x="1300.0" y="447.0" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">consultables hors du réseau de la banque</text>
+<text x="1300.0" y="462.6" text-anchor="middle" font-size="11" font-weight="normal" fill="#004D40">sans exposer aucune donnée client</text>
+<rect x="1040" y="545" width="520" height="205" rx="12.3" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="1052" y="609.8" text-anchor="start" font-size="13" font-weight="bold" fill="#263238">Pourquoi on ne duplique pas tout dans le cloud</text>
+<text x="1052" y="626.7" text-anchor="start" font-size="12" font-weight="normal" fill="#263238">1. Coût : chaque Go stocké deux fois est payé deux fois</text>
+<text x="1052" y="643.6" text-anchor="start" font-size="12" font-weight="normal" fill="#263238">2. Une seule source de vérité : pas de preuve divergente en audit</text>
+<text x="1052" y="660.5" text-anchor="start" font-size="12" font-weight="normal" fill="#263238">3. Périmètre PCI DSS / SWIFT CSP réduit au seul site</text>
+<text x="1052" y="677.4" text-anchor="start" font-size="12" font-weight="normal" fill="#263238">4. Le CCS donne déjà la vue unique : on interroge,</text>
+<text x="1052" y="694.3" text-anchor="start" font-size="12" font-weight="normal" fill="#263238">    on ne recopie pas</text>
+<text x="480.0" y="546.5" text-anchor="middle" font-size="10" font-weight="normal" fill="#00695C">alertes</text>
+<text x="968.0" y="214.5" text-anchor="middle" font-size="11" font-weight="normal" fill="#00695C">HTTPS 443</text>
+<text x="968.0" y="228.8" text-anchor="middle" font-size="11" font-weight="normal" fill="#00695C">sortant,</text>
+<text x="968.0" y="243.1" text-anchor="middle" font-size="11" font-weight="normal" fill="#00695C">filtré</text>
+<text x="969.5" y="530.2" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">Cross-Cluster</text>
+<text x="969.5" y="544.5" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">Search</text>
+<text x="969.5" y="558.9" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">requêtes à la</text>
+<text x="969.5" y="573.1" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">demande,</text>
+<text x="969.5" y="587.5" text-anchor="middle" font-size="11" font-weight="normal" fill="#0B3D91">TLS sortant</text>
+<rect x="40" y="770" width="500" height="115" rx="6.9" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="290.0" y="806.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Stable</text>
+<text x="290.0" y="823.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">collecte, stockage et détection du critique sur site</text>
+<text x="290.0" y="840.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">une coupure cloud n'arrête ni la collecte ni la détection</text>
+<text x="290.0" y="857.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">un seul flux sortant, aucun port entrant</text>
+<rect x="550" y="770" width="500" height="115" rx="6.9" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="800.0" y="806.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Scalable</text>
+<text x="800.0" y="823.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">les sources qui grossissent le plus partent dans le cloud</text>
+<text x="800.0" y="840.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">le site n'est dimensionné que pour le périmètre critique</text>
+<text x="800.0" y="857.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">nouveau site = agent + jeton d'enrôlement Fleet</text>
+<rect x="1060" y="770" width="500" height="115" rx="6.9" fill="#FFFFFF" stroke="#00897B" stroke-width="1.5"/>
+<text x="1310.0" y="806.7" text-anchor="middle" font-size="13" font-weight="bold" fill="#263238">Conforme</text>
+<text x="1310.0" y="823.6" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">cartes, clients et SWIFT restent dans la banque</text>
+<text x="1310.0" y="840.5" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">filtrage à la sortie, TLS, RBAC, région UE (RGPD, DORA)</text>
+<text x="1310.0" y="857.4" text-anchor="middle" font-size="12" font-weight="normal" fill="#263238">12 mois de rétention (PCI DSS 10.5.1)</text>
+<polyline points="260,370 260,460" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="680,370 680,460" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="460,560 500,560" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="860,520 915,520 915,170 1065,170" fill="none" stroke="#00897B" stroke-width="2" marker-end="url(#a-data)"/>
+<polyline points="400,610 400,622 1020,622 1020,205 1065,205" fill="none" stroke="#0B64DD" stroke-width="2" stroke-dasharray="8 5" marker-end="url(#a-ctrl)"/>
+<polyline points="150,630 150,612" fill="none" stroke="#8E24AA" stroke-width="2" marker-start="url(#a-soar)" marker-end="url(#a-soar)"/>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo3NDY2ZmRmYy1mZGQxLTRmYTQtYmFlOS01NGQzZTYxM2FkYmYAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaAbug568UHnQQDEO3MLaHkMAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDowOGNiMTU1MC1hODBjLTQ2MTQtOWQ0Yy1kMmI2YmIxNWZiOTlscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoJ48J1w6bf+ervR1q1PPTtgAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg7w0Hd69IzUT/NwLe3k86vWddz0XtbqeEn2re7Ki1TXekZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaHd7z4Gmhx7Y9uqzOsOCCM0AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIHAr6Mq+nAjAUflc8hN0Hlawf80RC8PMVvkfPzbHuqrfZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GT8EZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjc0NjZmZGZjLWZkZDEtNGZhNC1iYWU5LTU0ZDNlNjEzYWRiZi9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjQxY2UxOWI3LWI2YWItNDY3Yy1hYTZmLWYyNmUwZWY2ZWY0ZnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCDvDQd3r0jNRP83At7eTzq9Z13PRe1up4Sfat7sqLVNd6JjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggNOK+ZIUL1nmBWxki0PCIb10qu5Gd3MwLox1dAY5J2FKiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggtbqlLAHNLwiF7J/LS0R1zFuLb0w1Y7fBlxU+wzXXN6J0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQLzkOfdNG7oouXxgtZ5XFU1HZN25ecnLPINKNs5KPaKEPLYC4ZtnNhRNFsZ6IzfTUUenlVztxF6xjTIjLsdKpxs=</c2pa:manifest></metadata></svg>

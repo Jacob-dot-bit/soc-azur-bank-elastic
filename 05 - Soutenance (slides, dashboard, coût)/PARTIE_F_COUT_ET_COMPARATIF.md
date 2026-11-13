@@ -2,7 +2,7 @@
 
 Projet SOC RUN, ESGI 5A. Banque fictive Azur Bank : 1 500 collaborateurs, plusieurs sites, soumise à PCI DSS, SWIFT CSP et SEPA. Solution retenue : Elastic Security.
 
-Relevé des prix : 6 novembre 2026. Tous les prix éditeurs sont en dollars US hors taxes. Conversion retenue : **1 $ = 0,86 €** (hypothèse de travail, à recaler sur le cours du jour de la soutenance).
+Relevé des prix : 6 novembre 2026, architecture et chiffrage Elastic mis à jour le 13 novembre 2026. Tous les prix éditeurs sont en dollars US hors taxes. Conversion retenue : **1 $ = 0,86 €** (hypothèse de travail, à recaler sur le cours du jour de la soutenance).
 
 ---
 
@@ -79,41 +79,51 @@ Lecture : les quatre outils savent répondre techniquement à PCI DSS et SWIFT C
 
 ---
 
-## 4. Cible de production recommandée : Elastic en hybride
+## 4. Cible de production recommandée : Elastic en hybride (mise à jour du 13/11/2026)
 
-**Architecture** (voir [le schéma d'architecture hybride](../02%20-%20Architecture%20et%20infra/schemas/architecture-hybride.png)) :
+**Architecture** (voir `schemas-infra/architecture-hybride`) :
 
-- **On-prem** : Fleet Server (×2) et Logstash (×2) dans la zone SOC. Logstash filtre, enrichit et **masque les numéros de carte (PAN) avant tout envoi**, ce qui sort le cloud du périmètre des données de carte. Les zones SWIFT et PCI restent maîtrisées sur site. Shuffle (ou Elastic Workflows) pour le SOAR.
-- **Cloud** : projet **Elastic Security Serverless, niveau Complete**, en région UE. Pas d'infrastructure à exploiter, UEBA, automatisation des workflows et connectivité privée inclus.
+- **On-prem** : un cluster Elasticsearch de 3 nœuds dans la zone SOC garde les données critiques (base clients, SWIFT/SEPA, zone cartes, AD, bastion) pendant 12 mois. Fleet Server (×2) et Logstash (×2) à côté. Kibana on-prem est la console unique des analystes.
+- **Cloud** : déploiement **Elastic Cloud Hosted, niveau Enterprise**, en région UE. Il reçoit, par Logstash et seulement par lui, les sources volumineuses et moins sensibles (web, pare-feu, postes, réseau) et une copie des alertes. PAN, IBAN et noms sont retirés avant l'envoi.
+- **Vue unique sans duplication** : le Cross-Cluster Search (CCS) interroge les deux clusters en une requête, depuis le site (connexion sortante). Aucun log n'est stocké deux fois.
+- **Pourquoi Hosted et pas Serverless** : « Remote clusters are not available in Elastic Cloud Serverless » (doc Elastic, *Remote clusters*). Le CCS demande aussi « an appropriate license » des deux côtés, et le CCS pour les règles ES|QL demande Enterprise. D'où Enterprise sur site **et** dans le cloud. Levier de négociation : Platinum des deux côtés si l'on renonce aux règles ES|QL inter-clusters (les règles ES|QL sur les données locales restent possibles).
 - Alternative 100 % on-prem si la direction refuse le cloud : Elastic auto-hébergé **Enterprise** (voir 5.2).
 
-### 4.1 Consommation Elastic Serverless Complete (prix publics)
+### 4.1 Hypothèses de chiffrage
 
-Tarifs publics (elastic.co/pricing/serverless-security, en vigueur depuis le 1/11/2025) : **ingestion à partir de 0,11 $/Go**, **rétention à partir de 0,019 $/Go/mois**, 50 Go de sortie gratuits puis 0,05 $/Go. Ces prix sont des planchers (« as low as ») : on applique **une marge de ×1,5** pour le budget.
-
-| Année | Volume/jour | Ingestion | Rétention (montée en charge sur 365 j) | Total plancher | **Budget (×1,5)** |
-|---|---|---|---|---|---|
-| 1 | 100 Go | 4 015 $ | 4 161 $ | 8 176 $ | **12 264 $** |
-| 2 | 110 Go | 4 416 $ | 8 738 $ | 13 155 $ | **19 733 $** |
-| 3 | 121 Go | 4 858 $ | 9 612 $ | 14 470 $ | **21 705 $** |
-| **3 ans** | | | | 35 801 $ | **53 701 $ ≈ 46 200 €** |
-
-Calcul : ingestion = Go/jour × 365 × 0,11 $ ; rétention = Go conservés en moyenne sur l'année × 0,019 $ × 12 (le stock monte jusqu'à 365 jours de données, puis se stabilise).
+| Hypothèse | Valeur | Statut |
+|---|---|---|
+| Volume total | 100 Go/jour, +10 %/an | identique aux concurrents |
+| Répartition | 70 % vers le cloud (postes ≈ 45 Go, pare-feu/proxy/VPN ≈ 15 Go, web, réseau), 30 % sur site (AD, serveurs critiques, base clients, SWIFT) | d'après le tableau 1.1, à mesurer |
+| Prix Hosted Enterprise | 184 $/mois pour 120 Go de stockage sur 2 zones, soit 60 Go utiles : **≈ 3,07 $/Go utile/mois** en chaud | déduit du tarif public minimal (elastic.co/pricing/cloud-hosted) |
+| Rétention cloud | 7 jours en chaud, puis niveau gelé (searchable snapshots, interrogeable) jusqu'à 12 mois | répond à PCI DSS 10.5.1 (3 mois consultables, 12 mois conservés) |
+| Prix du niveau gelé | 0,03 $/Go/mois (stockage objet + cache) | hypothèse, à confirmer avec le calculateur Elastic |
+| Kibana, ML, serveur d'intégrations cloud | 5 k$/an | hypothèse |
+| Licence sur site | Enterprise, 2 unités de ressources (3 nœuds ≈ 128 Go de RAM), 10 à 20 k$ l'unité/an | **non public**, même fourchette qu'en 5.1 |
+| Matériel du cluster sur site | 3 serveurs, 45 k€ achetés en année 1 | estimation |
+| Change | 1 $ = 0,86 € | |
 
 ### 4.2 Coût complet sur 3 ans (TCO)
 
+Cloud : bas = prix déduit ci-dessus, haut = ×1,5 (comme pour les autres prix planchers). Total cloud 3 ans : **92 à 137 k€**.
+
 | Poste | Année 1 | Année 2 | Année 3 | 3 ans | Statut du prix |
 |---|---|---|---|---|---|
-| Elastic Serverless Complete (budget ×1,5) | 10,5 k€ | 17,0 k€ | 18,7 k€ | **46 k€** | public |
-| SOAR : Shuffle open source (ou Elastic Workflows, 10 000 exécutions gratuites puis 0,0108 $) | 0 | 0 | 0 | **0** | public |
-| Infrastructure on-prem (VM Fleet, Logstash, Shuffle sur la virtualisation existante, quote-part) | 6 k€ | 6 k€ | 6 k€ | **18 k€** | estimation |
-| Réseau (sortie de données, lien privé) | 1 k€ | 1 k€ | 1 k€ | **3 k€** | public (0,05 $/Go) |
-| Intégration : build 100 jours puis 25 jours/an de maintien, à 900 €/jour (intégrateur) | 90 k€ | 22,5 k€ | 22,5 k€ | **135 k€** | fourchette marché (TJM 700 à 1 100 €) |
+| Elastic Cloud Hosted Enterprise (milieu de fourchette) | 32 k€ | 40 k€ | 43 k€ | **115 k€** (92 à 137) | public (déduit) + hypothèses |
+| Licence Enterprise sur site (2 unités) | 26 k€ | 26 k€ | 26 k€ | **77 k€** (52 à 103) | non public, fourchette |
+| SOAR : Shuffle open source (ou Elastic Workflows) | 0 | 0 | 0 | **0** | public |
+| Infrastructure sur site : 3 serveurs ES (45 k€ en année 1) + VM Fleet, Logstash, Shuffle (6 k€/an) | 51 k€ | 6 k€ | 6 k€ | **63 k€** | estimation |
+| Réseau (sortie de données, lien privé) | 1 k€ | 1 k€ | 1 k€ | **3 k€** | public |
+| Intégration : build 110 jours (dont 10 pour le routage et le CCS) puis 25 jours/an, à 900 €/jour | 99 k€ | 22,5 k€ | 22,5 k€ | **144 k€** | fourchette marché |
 | Formation (Elastic Training, 5 personnes) | 10 k€ | 4 k€ | 4 k€ | **18 k€** | fourchette |
-| Support éditeur | inclus | inclus | inclus | **0** | support standard inclus ; support premium sur devis |
+| Support éditeur | inclus | inclus | inclus | **0** | inclus dans Enterprise |
 | Personnel SOC interne (heures ouvrées) | 410 k€ | 410 k€ | 410 k€ | **1 229 k€** | voir 4.3 |
 | Prestataire MSSP nuits et week-ends | 110 k€ | 110 k€ | 110 k€ | **330 k€** | non public, fourchette 80 à 150 k€/an |
-| **Total** | **≈ 638 k€** | **≈ 571 k€** | **≈ 573 k€** | **≈ 1,78 M€** | |
+| **Total** | **≈ 740 k€** | **≈ 620 k€** | **≈ 625 k€** | **≈ 1,98 M€** | |
+
+**Hors personnel et formation : ≈ 210 k€ en année 1, ≈ 400 k€ sur 3 ans (fourchette 350 à 450 k€).**
+
+Ancien chiffrage (6/11), conservé pour mémoire : Serverless Complete, ≈ 200 k€ sur 3 ans hors personnel. Il supposait un cluster sur site en licence Basic et ne permettait pas le CCS.
 
 ### 4.3 Personnel (le vrai coût d'un SOC)
 
@@ -127,7 +137,7 @@ Calcul : ingestion = Go/jour × 365 × 0,11 $ ; rétention = Go conservés en mo
 
 Un SOC interne 24 h/24 demanderait environ 10 analystes (5 à 6 ETP par poste tenu en continu) ; le modèle mixte « équipe interne en journée + MSSP la nuit » est le plus courant pour une banque de cette taille.
 
-**Ce qu'il faut retenir : la licence Elastic pèse moins de 3 % du coût total sur 3 ans. Le personnel en pèse près de 90 %.**
+**Ce qu'il faut retenir : les licences Elastic (cloud + site) pèsent environ 10 % du coût total sur 3 ans. Le personnel en pèse près de 80 %.**
 
 ---
 
@@ -139,7 +149,8 @@ On compare à périmètre égal : 100 Go/jour (+10 %/an), 12 mois de rétention.
 
 | Solution | Base de calcul | 3 ans | Nature du prix |
 |---|---|---|---|
-| **Elastic Serverless Complete** | 0,11 $/Go + 0,019 $/Go/mois, ×1,5 | **54 k$** | public (elastic.co) |
+| **Elastic hybride : Cloud Hosted Enterprise + Enterprise sur site** | voir 4.1 | **168 à 279 k$** | cloud déduit du tarif public, site non public |
+| Elastic Serverless Complete (ancien chiffrage, sans CCS) | 0,11 $/Go + 0,019 $/Go/mois, ×1,5 | 54 k$ | public (elastic.co) |
 | **Elastic auto-hébergé Enterprise** | ~6 unités de ressources (64 Go de RAM chacune : 4 nœuds chauds, 1 frozen, 1 ML), 10 à 20 k$ l'unité/an | **180 à 360 k$** | **non public** (« contact sales »), fourchette |
 | **Microsoft Sentinel** | palier 100 Go/jour à 296 $/jour (2,96 $/Go, dépassement au même tarif) + archive 0,02 $/Go/mois au-delà de 90 j | **375 k$** | tarif catalogue Azure East US relevé par un tiers |
 | **Splunk Cloud + Enterprise Security** | palier 100-199 Go/jour : 1 012 $ + 759 $ par Go/jour et par an | **586 k$** (+ SOAR sur devis) | prix catalogue G-Cloud 15 (janvier 2026) relevé par un tiers |
@@ -156,20 +167,20 @@ Remarques :
 
 | Solution | Licence | Infra propre | Intégration | **Total 3 ans** |
 |---|---|---|---|---|
-| **Elastic hybride (Serverless + collecte on-prem)** | 46 k€ | 21 k€ | 135 k€ | **≈ 200 k€** |
+| **Elastic hybride (Cloud Hosted + cluster sur site, Enterprise)** | 144 à 240 k€ | 66 k€ | 144 k€ | **≈ 400 k€ (350 à 450)** |
 | Elastic auto-hébergé Enterprise | 155 à 310 k€ | ~120 k€ (6 à 8 serveurs, stockage) | 160 k€ | **435 à 590 k€** |
 | Microsoft Sentinel | 323 k€ | ~20 k€ (collecteurs on-prem) | 135 k€ | **≈ 480 k€** |
 | IBM QRadar on-prem | 215 à 450 k€ (SOAR compris) | 70 à 140 k€ (appliances) | 160 k€ | **445 à 750 k€** |
 | Splunk Cloud + ES | 504 k€ (+ SOAR) | ~20 k€ | 150 k€ | **≈ 675 k€ et plus** |
 
-Avec le personnel (~1,56 M€ sur 3 ans pour tous), le TCO va de **≈ 1,78 M€ (Elastic hybride)** à **≈ 2,2 M€ et plus (Splunk)**.
+Avec le personnel (~1,56 M€ sur 3 ans pour tous), le TCO va de **≈ 2,0 M€ (Elastic hybride)** à **≈ 2,2 M€ et plus (Splunk)**.
 
 ---
 
 ## 6. Justification du choix pour Azur Bank
 
-1. **Coût** : à 100 Go/jour, la consommation Elastic Serverless coûte 7 fois moins que Sentinel et 11 fois moins que Splunk au prix catalogue. L'écart finance une partie de l'équipe SOC.
-2. **Hybride natif** : la collecte, le filtrage et le masquage des PAN restent on-prem (zones SWIFT et PCI), le moteur de détection est dans le cloud UE. Sentinel est cloud uniquement ; QRadar n'a plus d'offre cloud chez IBM.
+1. **Coût** : à 100 Go/jour, l'hybride Elastic coûte ≈ 400 k€ sur 3 ans hors personnel, soit 17 % de moins que Sentinel et 40 % de moins que Splunk ; les licences seules sont 1,7 fois moins chères que Sentinel et 2,6 fois moins que Splunk. L'écart finance environ un analyste N2.
+2. **Hybride natif** : les données critiques (clients, SWIFT, cartes) restent sur site, le volume part dans le cloud UE, et le CCS donne une vue unique sans copier les données. Sentinel est cloud uniquement ; QRadar n'a plus d'offre cloud chez IBM.
 3. **Pas de verrou** : licence Basic gratuite, schéma ECS ouvert, règles exportables en SIGMA. On a pu tout prototyper gratuitement dans le lab, ce qui réduit le risque du projet.
 4. **Pérennité** : éditeur indépendant, coté, offre en développement continu, contrairement à QRadar.
 5. **Points de vigilance** : les fonctions avancées sont payantes (niveau Complete ou Enterprise) ; le prix auto-hébergé n'est pas public et doit être négocié ; il faut des compétences Elasticsearch en interne si on choisit l'on-prem pur.
@@ -179,6 +190,9 @@ Avec le personnel (~1,56 M€ sur 3 ans pour tous), le TCO va de **≈ 1,78 M€
 ## 7. Sources (consultées le 6/11/2026)
 
 **Prix éditeurs (officiels)**
+
+- Elastic, *Remote clusters* (consulté le 13/11/2026) : https://www.elastic.co/docs/deploy-manage/remote-clusters (« Remote clusters are not available in Elastic Cloud Serverless »)
+- Elastic, *Cross-cluster search and detection rules* (13/11/2026) : https://www.elastic.co/docs/solutions/security/detect-and-alert/cross-cluster-search-detection-rules (CCS des règles ES|QL : Enterprise)
 
 - Elastic, *Elastic Cloud Serverless pricing for Elastic Security* : https://www.elastic.co/pricing/serverless-security (tarifs en vigueur depuis le 1/11/2025 ; fin des frais par terminal au 23/03/2026)
 - Elastic, *Elastic Cloud Hosted pricing* : https://www.elastic.co/pricing/cloud-hosted (Standard 99 $, Gold 114 $, Platinum 131 $, Enterprise 184 $ par mois au minimum)
@@ -212,6 +226,6 @@ Ce site est sponsorisé par un éditeur de pipeline de logs ; ses chiffres sont 
 
 1. Hypothèse : 100 Go de logs par jour (+10 %/an), 12 mois de rétention dont 3 mois chauds (PCI DSS 10.5.1).
 2. Lab : 0 € de licence (Elastic Basic + Logstash + Shuffle open source sur Proxmox).
-3. Production : Elastic Serverless Complete en hybride ≈ 46 k€ de consommation sur 3 ans, ≈ 200 k€ avec infra et intégration.
+3. Production : Elastic hybride (Cloud Hosted Enterprise + cluster Enterprise sur site, CCS) ≈ 190 k€ de licences sur 3 ans, ≈ 400 k€ (350 à 450) avec infra et intégration, dont ≈ 210 k€ en année 1.
 4. À périmètre égal, hors personnel : Sentinel ≈ 480 k€, QRadar 445 à 750 k€, Splunk ≈ 675 k€ et plus.
-5. TCO 3 ans ≈ 1,8 M€, dont près de 90 % de personnel : le choix d'Elastic finance l'équipe plutôt que la licence.
+5. TCO 3 ans ≈ 2,0 M€, dont près de 80 % de personnel : le choix d'Elastic finance l'équipe plutôt que la licence.
