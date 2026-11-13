@@ -3,7 +3,7 @@
 ## Vue d'ensemble (hybride)
 
 ```
-            CLOUD (Elastic Cloud Serverless, GCP us-east4)
+            CLOUD (Elastic Cloud Serverless, GCP us-east4 : essai du lab ; cible de production : Elastic Cloud Hosted)
    ┌──────────────────────────────────────────────────────────┐
    │ Elastic Security : partie Cloud de l'hybride (démo,      │
    │ essai jusqu'au 19/11) : données logs-*-banque, Workflows │
@@ -150,6 +150,12 @@ Tous les scripts sont dans `infra/siem-elk-01/`. Les secrets générés restent 
    `reenroler_windows.sh <id pol-windows> 201 202` (par l'agent invité QEMU). Chaque agent déjà installé reçoit
    `elastic-agent enroll --url=https://10.40.0.10:8220 --enrollment-token=... --certificate-authorities=soc-ca.crt --force` :
    il quitte le Fleet cloud et rejoint le Fleet on-prem sans réinstallation.
+   Limite constatée le 12 novembre : sur Windows, Elastic Defend garde la clé de signature et la sortie du Fleet cloud
+   (journal Endpoint : « signature verification failed ») et continue d'envoyer ses événements au cloud. Deux corrections :
+   la sortie Fleet `default` du lab (préconfigurée dans `/etc/kibana/kibana.yml`) porte désormais le certificat
+   `http_ca.crt` en plus de son empreinte, car Defend ignore l'empreinte seule ; et l'agent Windows est réinstallé
+   (`reinstaller_windows.ps1` dans `/root/soc-enroll`, lancé par `winrun.sh` après remplacement du jeton et de la CA).
+   Depuis, les événements `endpoint.events.*` de srv-dc01 et ws-agence arrivent sur le lab.
 9. **Règles** (sur la VM) : `ES_URL=https://10.40.0.10:9200 KB_URL=https://10.40.0.10:5601 REGLES=elastic-basic
    ES_CA=<CA SOC + http_ca.crt concaténées> python3 ../03 - Détection (use case et règles)/regles/scripts/regles.py deploy`, puis `alerts` après le test.
    Raccourci sur la VM : `/root/elastic/regles.sh deploy|alerts|check`, et `/root/elastic/etat.sh` (agents + data streams).
