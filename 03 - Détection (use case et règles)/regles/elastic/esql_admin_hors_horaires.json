@@ -3,7 +3,7 @@
   "name": "Connexion d'un compte administrateur hors heures ouvrées",
   "type": "esql",
   "language": "esql",
-  "description": "Connexion réussie d'un compte d'administration (préfixe adm. ou compte Administrateur intégré) en console ou RDP Windows (4624, LogonType 2 ou 10) ou en SSH (bastion), le week-end ou en dehors de 7h-20h heure de Paris.",
+  "description": "Connexion réussie d'un compte d'administration (préfixe adm. ou compte Administrateur intégré) en console ou RDP Windows (4624, LogonType 2 ou 10) ou en SSH (bastion), le week-end ou en dehors de 7h-20h heure de Paris. PCI DSS 10.2.1.2 (actions des comptes administrateurs).",
   "query": "FROM logs-system.security-*, logs-system.auth-* METADATA _id, _index, _version\n| WHERE event.outcome == \"success\" AND ((event.code == \"4624\" AND winlog.event_data.LogonType IN (\"2\", \"10\")) OR event.action == \"ssh_login\") AND (STARTS_WITH(user.name, \"adm.\") OR user.name IN (\"Administrateur\", \"Administrator\"))\n| EVAL mois = DATE_EXTRACT(\"month_of_year\", @timestamp)\n| EVAL heure_paris = CASE(mois >= 4 AND mois <= 10, @timestamp + 2 hours, @timestamp + 1 hour)\n| EVAL heure = DATE_EXTRACT(\"hour_of_day\", heure_paris), jour = DATE_EXTRACT(\"day_of_week\", heure_paris)\n| WHERE jour >= 6 OR heure < 7 OR heure >= 20\n| KEEP _id, _index, _version, @timestamp, user.name, host.name, source.ip, event.code, event.action, heure, jour",
   "severity": "medium",
   "risk_score": 47,

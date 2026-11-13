@@ -3,7 +3,7 @@
   "name": "Ajout à un groupe privilégié Active Directory",
   "type": "query",
   "language": "kuery",
-  "description": "Un compte est ajouté à un groupe de sécurité privilégié du domaine (Admins du domaine, Administrateurs de l'entreprise, du schéma, Administrateurs, Opérateurs de compte ou de sauvegarde). Événements Windows 4728, 4732 et 4756 ; noms de groupes anglais et français.",
+  "description": "Un compte est ajouté à un groupe de sécurité privilégié du domaine (Admins du domaine, Administrateurs de l'entreprise, du schéma, Administrateurs, Opérateurs de compte ou de sauvegarde). Événements Windows 4728, 4732 et 4756 ; noms de groupes anglais et français. PCI DSS 10.2.1.5 (modification des identifiants et élévation de privilèges).",
   "query": "event.code : (\"4728\" or \"4732\" or \"4756\") and (group.name : (\"Domain Admins\" or \"Admins du domaine\" or \"Enterprise Admins\" or \"Administrateurs de l'entreprise\" or \"Schema Admins\" or \"Administrateurs du schéma\" or \"Administrators\" or \"Administrateurs\" or \"Account Operators\" or \"Opérateurs de compte\" or \"Backup Operators\" or \"Opérateurs de sauvegarde\") or winlog.event_data.TargetUserName : (\"Domain Admins\" or \"Admins du domaine\" or \"Enterprise Admins\" or \"Administrateurs de l'entreprise\" or \"Schema Admins\" or \"Administrateurs du schéma\" or \"Administrators\" or \"Administrateurs\" or \"Account Operators\" or \"Opérateurs de compte\" or \"Backup Operators\" or \"Opérateurs de sauvegarde\"))",
   "index": [
     "logs-system.security-*",
@@ -68,7 +68,7 @@
     "Azur Bank",
     "Active Directory",
     "Comptes à privilèges",
-    "PCI DSS 7.2"
+    "PCI DSS 10.2.1.5"
   ],
   "from": "now-6m",
   "interval": "5m",

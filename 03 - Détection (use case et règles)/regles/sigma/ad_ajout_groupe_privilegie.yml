@@ -1,7 +1,7 @@
 title: Ajout d'un compte a un groupe privilegie Active Directory
 id: 4f17166a-d87c-4d69-aa49-19109f798968
 status: experimental
-description: Un compte est ajoute a un groupe de securite privilegie du domaine (Admins du domaine, Administrateurs de l'entreprise, du schema, Administrateurs, Operateurs de compte ou de sauvegarde). Evenements 4728 (groupe global), 4732 (groupe local) et 4756 (groupe universel). Noms anglais et francais.
+description: Un compte est ajoute a un groupe de securite privilegie du domaine (Admins du domaine, Administrateurs de l'entreprise, du schema, Administrateurs, Operateurs de compte ou de sauvegarde). Evenements 4728 (groupe global), 4732 (groupe local) et 4756 (groupe universel). Noms anglais et francais. PCI DSS 10.2.1.5 (modification des identifiants et elevation de privileges).
 author: Azur Bank SOC
 date: 2026-11-13
 references:
