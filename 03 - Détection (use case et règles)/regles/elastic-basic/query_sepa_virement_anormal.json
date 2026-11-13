@@ -1,0 +1,74 @@
+{
+  "rule_id": "azur-bank-sepa-virement-anormal",
+  "name": "Virement SEPA anormal",
+  "type": "query",
+  "language": "kuery",
+  "description": "Virement SEPA sortant (SCT ou SCT Inst) hors norme pour la banque de détail : SCT d'au moins 100 000 EUR, SCT Inst d'au moins 15 000 EUR, nouveau bénéficiaire recevant au moins 10 000 EUR, ou SCT Inst d'au moins 10 000 EUR hors heures ouvrées (lundi-vendredi 7 h - 20 h, heure de Paris). Champs enrichis par Logstash (pipeline sepa-transfer) ; les IBAN ne sont indexés que masqués et hachés. Répond à la surveillance des opérations de la DSP2 (RTS 2018/389, art. 2).",
+  "query": "event.dataset : \"sepa.transfer\" and event.action : \"CT_OUT\" and ((sepa.scheme : \"SCT\" and sepa.amount_eur >= 100000) or (sepa.scheme : \"SCT_INST\" and sepa.amount_eur >= 15000) or (sepa.beneficiaire_nouveau : true and sepa.amount_eur >= 10000) or (sepa.scheme : \"SCT_INST\" and sepa.hors_heures_ouvrees : true and sepa.amount_eur >= 10000))",
+  "index": [
+    "logs-sepa.transfer-*"
+  ],
+  "from": "now-6m",
+  "interval": "5m",
+  "to": "now",
+  "severity": "high",
+  "risk_score": 73,
+  "required_fields": [
+    {
+      "name": "sepa.amount_eur",
+      "type": "float"
+    },
+    {
+      "name": "sepa.beneficiaire_nouveau",
+      "type": "boolean"
+    },
+    {
+      "name": "sepa.hors_heures_ouvrees",
+      "type": "boolean"
+    },
+    {
+      "name": "sepa.scheme",
+      "type": "keyword"
+    }
+  ],
+  "false_positives": [
+    "Achat immobilier ou de véhicule, placement, versement exceptionnel déjà annoncé au conseiller : confirmer avec le client par un canal indépendant, puis ajouter une exception datée sur sepa.e2e."
+  ],
+  "note": "## Triage\n1. Lire le client (`user.name`), le schéma (`sepa.scheme` : SCT_INST = irrévocable en 10 s), le montant (`sepa.amount_eur`), le bénéficiaire (`sepa.creditor.iban_masque`, `sepa.creditor.bic`, `sepa.creditor.pays`), `sepa.beneficiaire_nouveau` et l'heure de Paris (`sepa.heure_locale`).\n2. Le bénéficiaire a-t-il été ajouté juste avant ? Rechercher d'autres virements vers le même compte (`sepa.creditor.iban_hash`), y compris depuis d'autres clients (compte mule).\n3. La session de banque en ligne est-elle normale (appareil, IP, pays, authentification forte réussie) ? Changement récent de téléphone ou de mot de passe ?\n\n## Réponse\n- Doute : appeler le client sur son numéro connu (jamais celui de la session). SCT : bloquer avant le règlement. SCT Inst : demander tout de suite le rappel (recall) à la banque du bénéficiaire.\n- Fraude avérée : bloquer l'accès en ligne du client, signaler le compte bénéficiaire, ouvrir un Case (criticité élevée), déclarer la fraude (statistiques DSP2) et informer le client.\n",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0040",
+        "name": "Impact",
+        "reference": "https://attack.mitre.org/tactics/TA0040/"
+      },
+      "technique": [
+        {
+          "id": "T1657",
+          "name": "Financial Theft",
+          "reference": "https://attack.mitre.org/techniques/T1657/",
+          "subtechnique": []
+        }
+      ]
+    }
+  ],
+  "references": [
+    "https://attack.mitre.org/techniques/T1657/",
+    "https://eur-lex.europa.eu/eli/reg_del/2018/389/oj",
+    "https://www.europeanpaymentscouncil.eu/what-we-do/sepa-instant-credit-transfer"
+  ],
+  "tags": [
+    "Azur Bank",
+    "SEPA",
+    "DSP2 RTS art. 2",
+    "Paiements",
+    "Licence Basic"
+  ],
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "enabled": true,
+  "max_signals": 100
+}

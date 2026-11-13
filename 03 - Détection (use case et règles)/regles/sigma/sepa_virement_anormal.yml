@@ -1,0 +1,35 @@
+title: Virement SEPA anormal
+id: 47133cd4-c7ea-4268-81f0-3401fa24d150
+status: experimental
+description: Virement SEPA sortant (SCT ou SCT Inst) hors norme pour la banque de detail. SCT d'au moins 100 000 EUR, SCT Inst d'au moins 15 000 EUR, nouveau beneficiaire recevant au moins 10 000 EUR, ou SCT Inst d'au moins 10 000 EUR hors heures ouvrees (lundi-vendredi 7h-20h, heure de Paris). Les champs beneficiaire_nouveau et hors_heures_ouvrees sont calcules par Logstash (pipeline sepa-transfer). Surveillance des operations exigee par la DSP2 (RTS authentification forte, art. 2).
+author: Azur Bank SOC
+date: 2026-11-14
+references:
+  - https://attack.mitre.org/techniques/T1657/
+  - https://eur-lex.europa.eu/eli/reg_del/2018/389/oj
+logsource:
+  product: sepa
+  service: payment_hub
+detection:
+  selection:
+    event.action: CT_OUT
+  sct_eleve:
+    sepa.scheme: SCT
+    sepa.amount_eur|gte: 100000
+  inst_eleve:
+    sepa.scheme: SCT_INST
+    sepa.amount_eur|gte: 15000
+  nouveau_beneficiaire:
+    sepa.beneficiaire_nouveau: true
+    sepa.amount_eur|gte: 10000
+  inst_hors_heures:
+    sepa.scheme: SCT_INST
+    sepa.hors_heures_ouvrees: true
+    sepa.amount_eur|gte: 10000
+  condition: selection and (sct_eleve or inst_eleve or nouveau_beneficiaire or inst_hors_heures)
+falsepositives:
+  - Achat immobilier ou de vehicule, placement, versement exceptionnel deja annonce au conseiller (verifier avec le client par un canal independant)
+level: high
+tags:
+  - attack.impact
+  - attack.t1657

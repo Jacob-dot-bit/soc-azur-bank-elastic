@@ -15,3 +15,4 @@ Ajoutées le 13 novembre 2026 (SIEM du lab, tests des règles Active Directory, 
 | `alerte-ad-groupe-privilegie-test.soc.png` | Alerte « Ajout à un groupe privilégié Active Directory » (high, 73) : `test.soc` ajouté aux Admins du domaine sur srv-dc01, MITRE TA0003 / T1098.007 |
 | `alerte-effacement-journal-srv-dc01.png` | Alerte « Effacement d'un journal d'événements Windows » (high, 73) : 1102 sur srv-dc01 après `wevtutil cl Security`, MITRE TA0112 / T1685.005 |
 | `alerte-admin-hors-horaires-adm.fontaine.png` | Alerte « Connexion d'un compte administrateur hors heures ouvrées » (medium, 47) : SSH d'`adm.fontaine` sur bastion-01 à 02:13 (heure de Paris), MITRE TA0001 / T1078.002 |
+| `alerte-sepa-virement-anormal-C104512.png` | Alerte « Virement SEPA anormal » (high, 73) : SCT Inst de 48 000 € du client C104512 vers un compte inconnu, 23:00 (heure de Paris), MITRE TA0040 / T1657 (14 novembre) |

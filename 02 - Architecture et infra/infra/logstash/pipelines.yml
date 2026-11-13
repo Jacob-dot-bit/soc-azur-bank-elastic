@@ -1,0 +1,6 @@
+# /etc/logstash/pipelines.yml (siem-elk-01) : un pipeline par source, pour que les filtres SWIFT et SEPA
+# ne s'appliquent pas aux messages de l'autre (par défaut, conf.d/*.conf forme un seul pipeline).
+- pipeline.id: swift-gateway
+  path.config: "/etc/logstash/conf.d/swift-gateway.conf"
+- pipeline.id: sepa-transfer
+  path.config: "/etc/logstash/conf.d/sepa-transfer.conf"

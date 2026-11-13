@@ -25,13 +25,14 @@ Azur Bank, base `core_clients` (PostgreSQL + pgaudit, zone Datacenter), Elastic 
 | `regles/elastic/threshold_lecture_massive_clients.json` | Threshold (KQL) | ≥ 500 lectures `clients` par `user.name` en 10 min | high |
 | `regles/elastic/eql_lecture_puis_export.json` | EQL sequence | 100 lectures `clients` puis un export, même compte, en 10 min | critical |
 | `regles/elastic/esql_lecture_puis_export.json` | ES\|QL | > 500 lectures `clients` puis au moins un export, même compte, en 10 min | critical |
-| `regles/elastic-basic/` | Mêmes règles | Variante pour l'instance on-prem en licence Basic (sans suppression d'alertes) ; les deux dossiers contiennent les 9 règles | |
+| `regles/elastic-basic/` | Mêmes règles | Variante pour l'instance on-prem en licence Basic (sans suppression d'alertes) ; les deux dossiers contiennent les 10 règles | |
 | `regles/elastic/query_swift_virement_anormal.json`, `regles/elastic-basic/query_swift_virement_anormal.json` + `regles/sigma/swift_virement_anormal.yml` | Query (KQL) + SIGMA | MT103/MT202 sortant ≥ 1 M EUR, correspondant hors référentiel ou hors heures ouvrées (passerelle SWIFT via Logstash) | critical |
 | `regles/elastic/threshold_portail_sqli.json`, `regles/elastic-basic/threshold_portail_sqli.json` + `regles/sigma/portail_sqli.yml` | Threshold (KQL) + SIGMA (corrélation `event_count`) | ≥ 10 requêtes nginx avec charge d'injection SQL ou `sqlmap` par `source.ip` en 5 min (T1190) | high |
 | `regles/elastic/eql_bastion_brute_force.json`, `regles/elastic-basic/eql_bastion_brute_force.json` + `regles/sigma/bastion_brute_force.yml` | EQL sequence + SIGMA (corrélation `temporal_ordered`) | ≥ 10 échecs puis un succès d'authentification, même IP et même compte, en 10 min (T1110.001) | critical |
 | `regles/elastic/query_ad_groupe_privilegie.json`, `regles/elastic-basic/query_ad_groupe_privilegie.json` + `regles/sigma/ad_ajout_groupe_privilegie.yml` | Query (KQL) + SIGMA | Ajout d'un compte à un groupe privilégié AD (4728, 4732, 4756 ; noms anglais et français) (T1098.007, PCI DSS 10.2.1.5) | high |
 | `regles/elastic/query_effacement_journal_windows.json`, `regles/elastic-basic/query_effacement_journal_windows.json` + `regles/sigma/windows_effacement_journal.yml` | Query (KQL) + SIGMA (2 documents) | Effacement d'un journal Windows : 1102 (Sécurité) ou 104 (System, Application...) (T1685.005, PCI DSS 10.3.2) | high |
 | `regles/elastic/esql_admin_hors_horaires.json`, `regles/elastic-basic/esql_admin_hors_horaires.json` + `regles/sigma/admin_connexion_interactive.yml` | ES\|QL + SIGMA | Connexion réussie d'un compte d'administration (console/RDP Windows ou SSH bastion) le week-end ou hors 7h-20h, heure de Paris (T1078.002, PCI DSS 10.2.1.2) | medium |
+| `regles/elastic/query_sepa_virement_anormal.json`, `regles/elastic-basic/query_sepa_virement_anormal.json` + `regles/sigma/sepa_virement_anormal.yml` | Query (KQL) + SIGMA | Virement SEPA sortant hors norme : SCT ≥ 100 000 €, SCT Inst ≥ 15 000 €, nouveau bénéficiaire ≥ 10 000 €, ou SCT Inst ≥ 10 000 € hors heures ouvrées (T1657, DSP2 RTS art. 2) | high |
 
 Requête KQL de la règle Threshold :
 
@@ -183,3 +184,61 @@ Effets de bord : aucun Case SOAR créé, aucun compte ni IP touché par Shuffle.
 
 Captures : `captures/alerte-ad-groupe-privilegie-test.soc.png`, `captures/alerte-effacement-journal-srv-dc01.png`,
 `captures/alerte-admin-hors-horaires-adm.fontaine.png`.
+
+## Règle SEPA : virement anormal (14 novembre)
+
+Le seul point de conformité sans règle dédiée était SEPA (« détection d'anomalies sur les flux de paiement »). Le hub de
+paiements SEPA est simulé comme la passerelle SWIFT : `sim_sepa.py` sur bastion-01 envoie les virements à Logstash
+(pipeline `sepa-transfer`), qui calcule les champs métier et masque les IBAN (voir `../02 - Architecture et infra/INFRA.md`).
+
+| Élément | Valeur |
+|---|---|
+| Nom | Virement SEPA anormal (`azur-bank-sepa-virement-anormal`) |
+| Type | Query (KQL) sur `logs-sepa.transfer-*`, toutes les 5 min ; SIGMA `regles/sigma/sepa_virement_anormal.yml` |
+| Sévérité | high (73) |
+| MITRE ATT&CK | Impact TA0040 / T1657 (Financial Theft), comme SWIFT |
+| Conformité | SEPA, DSP2 : surveillance des opérations (règlement délégué 2018/389, art. 2) |
+| Champs | `sepa.scheme` (SCT ou SCT_INST), `sepa.amount_eur`, `sepa.beneficiaire_nouveau`, `sepa.hors_heures_ouvrees`, `sepa.heure_locale`, `user.name` (client), `sepa.creditor.iban_masque`, `sepa.creditor.iban_hash`, `sepa.creditor.bic`, `sepa.creditor.pays` |
+
+Requête :
+
+```
+event.dataset : "sepa.transfer" and event.action : "CT_OUT" and (
+  (sepa.scheme : "SCT" and sepa.amount_eur >= 100000) or
+  (sepa.scheme : "SCT_INST" and sepa.amount_eur >= 15000) or
+  (sepa.beneficiaire_nouveau : true and sepa.amount_eur >= 10000) or
+  (sepa.scheme : "SCT_INST" and sepa.hors_heures_ouvrees : true and sepa.amount_eur >= 10000))
+```
+
+Choix des seuils (banque de détail, à recalibrer sur 3 mois de flux réels) :
+
+- **SCT ≥ 100 000 €** : un virement classique est réglé le jour ouvré suivant et peut encore être bloqué. Au-delà de
+  100 000 €, il s'agit d'opérations rares chez un particulier (achat immobilier), qui méritent une vérification.
+- **SCT Inst ≥ 15 000 €** : un virement instantané part en 10 secondes et ne se rappelle plus sans l'accord du
+  bénéficiaire. Le seuil est donc plus bas. Depuis le règlement (UE) 2024/886, chaque client peut fixer son propre
+  plafond d'instantané ; 15 000 € couvre largement l'usage courant d'un particulier.
+- **Nouveau bénéficiaire ≥ 10 000 €** : schéma typique de la fraude au faux conseiller ou de la prise de contrôle du
+  compte : le fraudeur ajoute son compte (« mule ») et vide le compte dans la foulée.
+- **SCT Inst ≥ 10 000 € hors heures ouvrées** : la nuit et le week-end, le client ne peut pas joindre son agence et
+  l'équipe fraude est réduite ; c'est là que les fraudeurs frappent.
+
+### Tests sur le lab (heures UTC)
+
+```bash
+# sur l'hôte Proxmox, dans bastion-01 (LXC 212)
+pct exec 212 -- /usr/local/bin/sim_sepa.py -n 0 --fraude --date 2026-11-13T22:00:00Z          # 23:00 à Paris
+pct exec 212 -- /usr/local/bin/sim_sepa.py -n 0 --normal-unique --date 2026-11-13T10:00:00Z   # 11:00 à Paris
+# puis exécution manuelle de la règle sur 21:55-22:05 et 09:55-10:05 (API _bulk_action, action run)
+```
+
+- Test positif : OK. Virement SCT Inst de 48 000 € du client C104512 vers un compte lituanien jamais utilisé
+  (`LT21 **** 1348`, BIC REVOLT21XXX), le 13/11 à 23:00 heure de Paris : `sepa.beneficiaire_nouveau` = true,
+  `sepa.hors_heures_ouvrees` = true. Alerte « Virement SEPA anormal » (high, 73) créée le 13/11 à 23:17:36 UTC. Trois des quatre
+  conditions sont remplies (Inst ≥ 15 000 €, nouveau bénéficiaire, Inst hors heures).
+- Test négatif : OK. Virement SCT de 1 250 € du client C102310 vers un bénéficiaire habituel (`FR46 **** 4387`), le 13/11
+  à 11:00 heure de Paris : aucune alerte. Les virements normaux envoyés en direct par le simulateur à 23:16 UTC
+  (SCT de 6 400 à 6 700 € vers des bénéficiaires connus) n'ont pas non plus déclenché la règle planifiée.
+- Une seule alerte au total pour cette règle ; aucun Case SOAR créé (le playbook Shuffle ne lit pas cette règle).
+- Aucun IBAN en clair dans `logs-sepa.transfer-*` : seulement `iban_masque` et `iban_hash`.
+
+Capture : `captures/alerte-sepa-virement-anormal-C104512.png`.

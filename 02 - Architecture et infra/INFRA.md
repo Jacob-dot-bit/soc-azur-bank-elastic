@@ -178,6 +178,28 @@ inconnu : la règle « Virement SWIFT anormal » (`../03 - Détection (use case 
 
 Refaire : paquet `logstash-9.5.6-amd64.deb` dans `/root/elastic` de la VM, puis `bash infra/logstash/install_logstash.sh`.
 
+### Logstash : les virements SEPA (14 novembre 2026)
+
+Même principe pour le hub de paiements SEPA, sur un deuxième pipeline : `infra/logstash/sepa-transfer.conf` écoute en
+TCP 5515 et range les virements sortants (SCT et SCT Inst) dans `logs-sepa.transfer-default`. Champs ajoutés avant
+l'indexation : `sepa.amount_eur`, `sepa.beneficiaire_nouveau` (référentiel « client|IBAN » des bénéficiaires enregistrés,
+`infra/logstash/sepa-beneficiaires.yml`, copié dans `/etc/logstash/sepa/beneficiaires.yml`), `sepa.heure_locale` et
+`sepa.hors_heures_ouvrees` (heure de Paris), `sepa.instantane`. Les IBAN ne sont jamais indexés en clair : seulement
+masqués (`FR85 **** 9362`) et hachés en HMAC-SHA256 (`sepa.creditor.iban_hash`, pour retrouver tous les virements vers un
+même compte sans connaître l'IBAN). La clé de hachage et la clé API (écriture dans `logs-sepa.transfer-*` seulement) sont
+dans `/etc/default/logstash` (root seul).
+
+Les deux pipelines sont séparés dans `/etc/logstash/pipelines.yml` (`infra/logstash/pipelines.yml`) : par défaut,
+`conf.d/*.conf` ne forme qu'un pipeline et les filtres SWIFT s'appliqueraient aux virements SEPA.
+
+Le hub est simulé par `infra/bastion/sim_sepa.py` sur bastion-01 (timer `infra/bastion/sim-sepa.timer`, 6 virements
+toutes les 5 min en jours ouvrés, vers les bénéficiaires habituels des clients). `sim_sepa.py --fraude` ajoute un SCT Inst
+de 48 000 EUR vers un compte mule inconnu : la règle « Virement SEPA anormal » lève une alerte. Testé le 14 novembre.
+
+Refaire : `bash infra/logstash/install_sepa.sh <dossier>` en root sur siem-elk-01 (après `install_logstash.sh`), puis
+sur l'hôte Proxmox : `pct push 212 sim_sepa.py /usr/local/bin/sim_sepa.py --perms 755`, copier `sim-sepa.service` et
+`sim-sepa.timer` dans `/etc/systemd/system/` du bastion et `systemctl enable --now sim-sepa.timer`.
+
 ### Shuffle : la phase 2 SOAR
 
 Shuffle 2.3.0 (open source, Docker) tourne sur soar-shuffle-01. En licence Basic, Kibana ne peut pas appeler de webhook :
