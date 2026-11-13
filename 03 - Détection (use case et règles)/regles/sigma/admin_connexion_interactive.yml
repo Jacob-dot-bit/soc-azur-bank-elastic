@@ -1,0 +1,31 @@
+title: Connexion interactive d'un compte administrateur
+id: e9bf6125-3272-4499-8c60-f7221cd4f094
+status: experimental
+description: Ouverture de session interactive (LogonType 2, console) ou RDP (LogonType 10) d'un compte d'administration (prefixe adm. ou compte Administrateur integre). La plage horaire (hors 7h-20h et week-end, heure de Paris) n'existe pas en SIGMA standard ; elle est portee par la regle ES|QL azur-bank-admin-hors-horaires, qui couvre aussi les connexions SSH au bastion.
+author: Azur Bank SOC
+date: 2026-11-13
+references:
+  - https://attack.mitre.org/techniques/T1078/002/
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4624
+    LogonType:
+      - 2
+      - 10
+  compte_adm:
+    TargetUserName|startswith: adm.
+  compte_integre:
+    TargetUserName:
+      - Administrateur
+      - Administrator
+  condition: selection and (compte_adm or compte_integre)
+falsepositives:
+  - Intervention d'astreinte ou maintenance planifiee hors heures ouvrees (verifier le planning d'astreinte)
+level: medium
+tags:
+  - attack.initial-access
+  - attack.privilege-escalation
+  - attack.t1078.002

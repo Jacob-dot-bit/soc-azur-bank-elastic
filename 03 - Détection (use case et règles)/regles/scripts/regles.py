@@ -28,7 +28,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 RULES_DIR = os.path.join(HERE, "..", os.environ.get("REGLES", "elastic"))
 RULE_IDS = ["azur-bank-client-data-exfil", "azur-bank-client-data-exfil-sequence", "azur-bank-client-data-exfil-esql",
             "azur-bank-swift-virement-anormal",
-            "azur-bank-portail-sqli", "azur-bank-bastion-brute-force"]
+            "azur-bank-portail-sqli", "azur-bank-bastion-brute-force",
+            "azur-bank-ad-groupe-privilegie", "azur-bank-effacement-journal", "azur-bank-admin-hors-horaires"]
 
 ES_URL = os.environ.get("ES_URL", "").rstrip("/")
 KEY = os.environ.get("ES_API_KEY")

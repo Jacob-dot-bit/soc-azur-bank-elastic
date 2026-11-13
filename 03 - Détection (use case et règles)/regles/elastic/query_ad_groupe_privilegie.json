@@ -1,0 +1,93 @@
+{
+  "rule_id": "azur-bank-ad-groupe-privilegie",
+  "name": "Ajout à un groupe privilégié Active Directory",
+  "type": "query",
+  "language": "kuery",
+  "description": "Un compte est ajouté à un groupe de sécurité privilégié du domaine (Admins du domaine, Administrateurs de l'entreprise, du schéma, Administrateurs, Opérateurs de compte ou de sauvegarde). Événements Windows 4728, 4732 et 4756 ; noms de groupes anglais et français.",
+  "query": "event.code : (\"4728\" or \"4732\" or \"4756\") and (group.name : (\"Domain Admins\" or \"Admins du domaine\" or \"Enterprise Admins\" or \"Administrateurs de l'entreprise\" or \"Schema Admins\" or \"Administrateurs du schéma\" or \"Administrators\" or \"Administrateurs\" or \"Account Operators\" or \"Opérateurs de compte\" or \"Backup Operators\" or \"Opérateurs de sauvegarde\") or winlog.event_data.TargetUserName : (\"Domain Admins\" or \"Admins du domaine\" or \"Enterprise Admins\" or \"Administrateurs de l'entreprise\" or \"Schema Admins\" or \"Administrateurs du schéma\" or \"Administrators\" or \"Administrateurs\" or \"Account Operators\" or \"Opérateurs de compte\" or \"Backup Operators\" or \"Opérateurs de sauvegarde\"))",
+  "index": [
+    "logs-system.security-*",
+    "logs-windows.*"
+  ],
+  "severity": "high",
+  "risk_score": 73,
+  "false_positives": [
+    "Ajout planifié par l'équipe AD avec un ticket de changement : vérifier l'auteur (winlog.event_data.SubjectUserName) et le ticket."
+  ],
+  "note": "## Triage\n1. Qui a été ajouté (`winlog.event_data.MemberName` / `user.target.name`), à quel groupe (`group.name`), par qui (`winlog.event_data.SubjectUserName`) et depuis quel poste ?\n2. Existe-t-il un ticket de changement validé pour cet ajout ?\n3. Le compte ajouté est-il récent (4720 dans les 24 h) ? L'auteur s'est-il connecté de façon inhabituelle juste avant (4624, bastion) ?\n\n## Réponse\n- Non autorisé : retirer immédiatement le compte du groupe, désactiver le compte ajouté et réinitialiser le mot de passe de l'auteur, ouvrir un Case (criticité élevée).\n- Rechercher les autres actions de l'auteur sur les contrôleurs de domaine (création de comptes, GPO, tâches planifiées).\n",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0003",
+        "name": "Persistence",
+        "reference": "https://attack.mitre.org/tactics/TA0003/"
+      },
+      "technique": [
+        {
+          "id": "T1098",
+          "name": "Account Manipulation",
+          "reference": "https://attack.mitre.org/techniques/T1098/",
+          "subtechnique": [
+            {
+              "id": "T1098.007",
+              "name": "Additional Local or Domain Groups",
+              "reference": "https://attack.mitre.org/techniques/T1098/007/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0004",
+        "name": "Privilege Escalation",
+        "reference": "https://attack.mitre.org/tactics/TA0004/"
+      },
+      "technique": [
+        {
+          "id": "T1098",
+          "name": "Account Manipulation",
+          "reference": "https://attack.mitre.org/techniques/T1098/",
+          "subtechnique": [
+            {
+              "id": "T1098.007",
+              "name": "Additional Local or Domain Groups",
+              "reference": "https://attack.mitre.org/techniques/T1098/007/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "references": [
+    "https://attack.mitre.org/techniques/T1098/007/"
+  ],
+  "tags": [
+    "Azur Bank",
+    "Active Directory",
+    "Comptes à privilèges",
+    "PCI DSS 7.2"
+  ],
+  "from": "now-6m",
+  "interval": "5m",
+  "to": "now",
+  "enabled": true,
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "max_signals": 100,
+  "alert_suppression": {
+    "group_by": [
+      "host.name",
+      "user.name"
+    ],
+    "duration": {
+      "value": 30,
+      "unit": "m"
+    },
+    "missing_fields_strategy": "suppress"
+  }
+}

@@ -1,0 +1,44 @@
+title: Effacement du journal Securite Windows
+id: e1b742f7-3fb4-42f5-9129-37ac492c223f
+status: experimental
+description: Le journal Securite a ete efface (evenement 1102, emis par Microsoft-Windows-Eventlog dans le journal Security). Typique d'un attaquant qui efface ses traces (wevtutil cl Security, Clear-EventLog). ATT&CK v20 T1685.005, anciennement T1070.001.
+author: Azur Bank SOC
+date: 2026-11-13
+references:
+  - https://attack.mitre.org/techniques/T1685/005/
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 1102
+  condition: selection
+falsepositives:
+  - Purge volontaire par un administrateur lors d'une maintenance documentee (rare sur un serveur en production)
+level: high
+tags:
+  - attack.defense-impairment
+  - attack.t1685.005
+---
+title: Effacement d'un journal Windows (System, Application...)
+id: d591fa6d-11e6-44b2-8863-0e43475ea483
+status: experimental
+description: Un journal autre que Securite a ete efface (evenement 104 du fournisseur Microsoft-Windows-Eventlog, ecrit dans le journal System).
+author: Azur Bank SOC
+date: 2026-11-13
+references:
+  - https://attack.mitre.org/techniques/T1685/005/
+logsource:
+  product: windows
+  service: system
+detection:
+  selection:
+    EventID: 104
+    Provider_Name: Microsoft-Windows-Eventlog
+  condition: selection
+falsepositives:
+  - Purge volontaire par un administrateur lors d'une maintenance documentee
+level: high
+tags:
+  - attack.defense-impairment
+  - attack.t1685.005

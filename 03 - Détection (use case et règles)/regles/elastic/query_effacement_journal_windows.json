@@ -1,0 +1,72 @@
+{
+  "rule_id": "azur-bank-effacement-journal",
+  "name": "Effacement d'un journal d'événements Windows",
+  "type": "query",
+  "language": "kuery",
+  "description": "Un journal d'événements Windows a été effacé : 1102 (journal Sécurité) ou 104 (autre journal, fournisseur Microsoft-Windows-Eventlog). Un attaquant efface ainsi ses traces (wevtutil cl, Clear-EventLog). MITRE ATT&CK v20 : T1685.005 (anciennement T1070.001).",
+  "query": "event.code : \"1102\" or (event.code : \"104\" and (winlog.provider_name : \"Microsoft-Windows-Eventlog\" or winlog.channel : \"System\"))",
+  "index": [
+    "logs-system.security-*",
+    "logs-system.system-*",
+    "logs-windows.*"
+  ],
+  "severity": "high",
+  "risk_score": 73,
+  "false_positives": [
+    "Purge volontaire lors d'une maintenance documentée (rare sur un serveur en production)."
+  ],
+  "note": "## Triage\n1. Quel journal (`winlog.channel`, `winlog.event_data.Channel`), quelle machine (`host.name`), quel compte (`winlog.user_data.SubjectUserName` / `user.name`) ?\n2. Une maintenance est-elle planifiée sur cette machine ? Le compte est-il un compte d'administration attendu ?\n3. Les événements effacés sont déjà dans le SIEM : rechercher dans `logs-system.security-*` ce qui précède l'effacement sur ce poste (connexions, créations de comptes, processus Sysmon).\n\n## Réponse\n- Non justifié : traiter la machine comme compromise (isolement réseau via Elastic Defend), désactiver le compte, ouvrir un Case (criticité élevée).\n- PCI DSS 10.3 : les journaux doivent être protégés contre la modification ; consigner l'événement dans le Case.\n",
+  "threat": [
+    {
+      "framework": "MITRE ATT&CK",
+      "tactic": {
+        "id": "TA0112",
+        "name": "Defense Impairment",
+        "reference": "https://attack.mitre.org/tactics/TA0112/"
+      },
+      "technique": [
+        {
+          "id": "T1685",
+          "name": "Disable or Modify Tools",
+          "reference": "https://attack.mitre.org/techniques/T1685/",
+          "subtechnique": [
+            {
+              "id": "T1685.005",
+              "name": "Clear Windows Event Logs",
+              "reference": "https://attack.mitre.org/techniques/T1685/005/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "references": [
+    "https://attack.mitre.org/techniques/T1685/005/"
+  ],
+  "tags": [
+    "Azur Bank",
+    "Windows",
+    "Intégrité des journaux",
+    "PCI DSS 10.3"
+  ],
+  "from": "now-6m",
+  "interval": "5m",
+  "to": "now",
+  "enabled": true,
+  "author": [
+    "Azur Bank SOC"
+  ],
+  "license": "Interne",
+  "max_signals": 100,
+  "alert_suppression": {
+    "group_by": [
+      "host.name",
+      "user.name"
+    ],
+    "duration": {
+      "value": 30,
+      "unit": "m"
+    },
+    "missing_fields_strategy": "suppress"
+  }
+}
