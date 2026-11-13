@@ -21,7 +21,7 @@ le case dans Kibana. Capture du case : `schemas/case-kibana-c_dupont.png`. Sché
 | 21:38 | Prise en charge par l'analyste N1, triage (exercice : triage différé, le confinement automatique avait déjà agi) | Kibana Cases |
 | 21:39:40 | Ticket 5W publié, case clos (N2), alertes closes par synchronisation | Kibana Cases |
 
-Détection en 15 s après l'export, confinement 50 s après la première alerte, sans intervention humaine.
+Détection en 15 s après l'export, confinement 50 s après la première alerte, en mode démonstration (sans clic).
 
 ## 2. Triage dans Alerts et Cases : ce qui a été fait, et comment le refaire
 
@@ -59,11 +59,11 @@ Détection en 15 s après l'export, confinement 50 s après la première alerte,
 **Mesures**
 
 - Détection (MTTD) : 15 s entre l'export et la première alerte.
-- Confinement (MTTR) : 50 s entre la première alerte et le verrouillage, par le playbook Shuffle, sans intervention humaine.
+- Confinement (MTTR) : 50 s entre la première alerte et le verrouillage, par le playbook Shuffle, en mode démonstration (sans clic).
 
 **Actions menées**
 
-1. Automatique (Shuffle) : case ouvert, rôle `c_dupont` en `NOLOGIN` et sessions coupées, compte AD `c.dupont` désactivé, alertes acquittées. L'IP source est interne (bastion), elle n'a donc pas été bloquée.
+1. Automatique (Shuffle, mode démonstration du lab, sans clic) : case ouvert, rôle `c_dupont` en `NOLOGIN` et sessions coupées, compte AD `c.dupont` désactivé, alertes acquittées. L'IP source est interne (bastion), elle n'a donc pas été bloquée.
 2. N1 : alertes vérifiées, vrai positif confirmé, alerte ES\|QL rattachée, case doublon fermé, escalade N2.
 3. N2 : périmètre confirmé. Sur 24 h, c_dupont est le seul compte à avoir lu la table clients. Dans les journaux de fw-01, un seul flux sort de la base vers Internet, entre 18:00 et 18:40 : 151.101.206.132:80, le miroir Debian (mise à jour de paquets), sans lien avec l'incident. L'export est donc resté sur le bastion, qui devient la pièce à analyser (fichier écrit, rebond vers l'extérieur).
 
@@ -77,7 +77,7 @@ Détection en 15 s après l'export, confinement 50 s après la première alerte,
 
 1. Rendre le TOTP obligatoire sur le bastion (retirer `nullok`) et changer le mot de passe de c.dupont.
 2. Retirer à `c_dupont` le droit de lire toute la table : vue limitée aux clients de son agence, et pas de `COPY` pour les rôles conseillers.
-3. Garder le playbook en mode réel. Ajouter une étape de mise en quarantaine du poste source via Elastic Defend (licence Platinum) ou via fw-01.
+3. En production, appliquer la répartition automatique / validation humaine de la section 4 (le mode démonstration du lab enchaîne tout sans clic). Ajouter une étape de mise en quarantaine du poste source via Elastic Defend (licence Platinum) ou via fw-01.
 
 ## 4. Playbook SOAR (Shuffle)
 
@@ -87,6 +87,18 @@ Le workflow « Azur Bank - Réponse exfiltration et fraude SWIFT » est déclenc
 lien (`$lire_alertes.message.nb larger than 0`) l'arrête quand il n'y a rien à traiter. Le code des quatre nœuds est dans
 `soar-shuffle-01/playbook/`, et `soar-shuffle-01/creer_workflow.py` recrée le workflow. Installation et comptes de service :
 `../02 - Architecture et infra/INFRA.md`, section Bonus.
+
+Ce que le playbook fait seul et ce qui attend l'analyste :
+
+| Action | Mode | Pourquoi |
+|---|---|---|
+| Enrichissement de l'alerte, ouverture du case, notification du N2 | Automatique, toujours | Sans effet sur la production, et fait gagner les premières minutes du triage |
+| Rôle PostgreSQL du compte en `NOLOGIN` et sessions coupées | Automatique seulement si l'alerte est critique (lecture massive suivie d'un export vers une IP externe) | Coupe-circuit réversible en une commande : l'exfiltration s'arrête en quelques secondes, et un faux positif ne coûte qu'une reconnexion |
+| Désactivation du compte AD | Sur validation de l'analyste (un clic) | Touche tous les accès de la personne (poste, messagerie, applications) : impact métier fort, à décider par un humain |
+| Blocage de l'IP sur fw-01 | Sur validation de l'analyste (un clic) | Un blocage à tort peut couper un partenaire ou un service légitime |
+
+Dans le lab, le mode démonstration enchaîne toutes ces actions sans clic, pour mesurer le temps total de réponse
+(50 s entre la première alerte et le verrouillage le 6/11).
 
 Pour rejouer l'incident : lancer l'exfiltration depuis le bastion (`../02 - Architecture et infra/VISITE_GUIDEE.md`, maillon 3),
 attendre une minute, faire le triage ci-dessus, puis remettre le compte en état sur l'hôte avec `bash /root/soc-enroll/reinitialiser_demo.sh`.

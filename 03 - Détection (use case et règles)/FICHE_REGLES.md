@@ -12,7 +12,7 @@ Azur Bank, base `core_clients` (PostgreSQL + pgaudit, zone Datacenter), Elastic 
 | Sources | Audit PostgreSQL du serveur db-clients (`logs-db.audit-*`), corrélé avec le bastion (`logs-bastion.auth-*`) |
 | Seuil / fenêtre | 500 lectures ou plus de la table `clients` par `user.name` sur 10 minutes |
 | Exécution | Toutes les minutes, sur les 10 dernières minutes (fenêtre glissante) |
-| Action | Alerte dans Security > Alerts, ouverture d'un Case, playbook SOAR (désactivation du compte, coupure de session, blocage IP destination) après validation de l'analyste |
+| Action | Alerte dans Security > Alerts, puis playbook SOAR Shuffle. Automatique toujours : enrichissement, ouverture du Case, notification N2. Automatique seulement si l'alerte est critique (lecture massive + export vers une IP externe) : rôle PostgreSQL en `NOLOGIN` et sessions coupées (coupe-circuit réversible). Sur validation de l'analyste (un clic) : désactivation du compte AD et blocage de l'IP sur fw-01. Dans le lab, le mode démonstration enchaîne tout sans clic pour mesurer le temps total |
 | Priorité | Élevée (risk score 73). Critique (99) si un export suit |
 | MITRE ATT&CK | Collection TA0009 / T1530 (énoncé), Exfiltration TA0010. Variante séquence : T1048.002 |
 
@@ -25,10 +25,13 @@ Azur Bank, base `core_clients` (PostgreSQL + pgaudit, zone Datacenter), Elastic 
 | `regles/elastic/threshold_lecture_massive_clients.json` | Threshold (KQL) | ≥ 500 lectures `clients` par `user.name` en 10 min | high |
 | `regles/elastic/eql_lecture_puis_export.json` | EQL sequence | 100 lectures `clients` puis un export, même compte, en 10 min | critical |
 | `regles/elastic/esql_lecture_puis_export.json` | ES\|QL | > 500 lectures `clients` puis au moins un export, même compte, en 10 min | critical |
-| `regles/elastic-basic/` | Mêmes règles | Variante pour l'instance on-prem en licence Basic (sans suppression d'alertes) | |
-| `regles/elastic-basic/query_swift_virement_anormal.json` + `regles/sigma/swift_virement_anormal.yml` | Query (KQL) + SIGMA | MT103/MT202 sortant ≥ 1 M EUR, correspondant hors référentiel ou hors heures ouvrées (passerelle SWIFT via Logstash) | critical |
-| `regles/elastic-basic/threshold_portail_sqli.json` + `regles/sigma/portail_sqli.yml` | Threshold (KQL) + SIGMA (corrélation `event_count`) | ≥ 10 requêtes nginx avec charge d'injection SQL ou `sqlmap` par `source.ip` en 5 min (T1190) | high |
-| `regles/elastic-basic/eql_bastion_brute_force.json` + `regles/sigma/bastion_brute_force.yml` | EQL sequence + SIGMA (corrélation `temporal_ordered`) | ≥ 10 échecs puis un succès d'authentification, même IP et même compte, en 10 min (T1110.001) | critical |
+| `regles/elastic-basic/` | Mêmes règles | Variante pour l'instance on-prem en licence Basic (sans suppression d'alertes) ; les deux dossiers contiennent les 9 règles | |
+| `regles/elastic/query_swift_virement_anormal.json`, `regles/elastic-basic/query_swift_virement_anormal.json` + `regles/sigma/swift_virement_anormal.yml` | Query (KQL) + SIGMA | MT103/MT202 sortant ≥ 1 M EUR, correspondant hors référentiel ou hors heures ouvrées (passerelle SWIFT via Logstash) | critical |
+| `regles/elastic/threshold_portail_sqli.json`, `regles/elastic-basic/threshold_portail_sqli.json` + `regles/sigma/portail_sqli.yml` | Threshold (KQL) + SIGMA (corrélation `event_count`) | ≥ 10 requêtes nginx avec charge d'injection SQL ou `sqlmap` par `source.ip` en 5 min (T1190) | high |
+| `regles/elastic/eql_bastion_brute_force.json`, `regles/elastic-basic/eql_bastion_brute_force.json` + `regles/sigma/bastion_brute_force.yml` | EQL sequence + SIGMA (corrélation `temporal_ordered`) | ≥ 10 échecs puis un succès d'authentification, même IP et même compte, en 10 min (T1110.001) | critical |
+| `regles/elastic/query_ad_groupe_privilegie.json`, `regles/elastic-basic/query_ad_groupe_privilegie.json` + `regles/sigma/ad_ajout_groupe_privilegie.yml` | Query (KQL) + SIGMA | Ajout d'un compte à un groupe privilégié AD (4728, 4732, 4756 ; noms anglais et français) (T1098.007, PCI DSS 7.2) | high |
+| `regles/elastic/query_effacement_journal_windows.json`, `regles/elastic-basic/query_effacement_journal_windows.json` + `regles/sigma/windows_effacement_journal.yml` | Query (KQL) + SIGMA (2 documents) | Effacement d'un journal Windows : 1102 (Sécurité) ou 104 (System, Application...) (T1685.005, PCI DSS 10.3) | high |
+| `regles/elastic/esql_admin_hors_horaires.json`, `regles/elastic-basic/esql_admin_hors_horaires.json` + `regles/sigma/admin_connexion_interactive.yml` | ES\|QL + SIGMA | Connexion réussie d'un compte d'administration (console/RDP Windows ou SSH bastion) le week-end ou hors 7h-20h, heure de Paris (T1078.002, PCI DSS 10.2.1.2) | medium |
 
 Requête KQL de la règle Threshold :
 
@@ -113,3 +116,70 @@ Résultat : une alerte « Injection SQL sur le portail clients » sur 10.0.5.10,
 bastion » sur `adm.fontaine` (avec ses 11 événements « building block »). OpenSSH 10 (Debian 13) pénalise une IP après
 plusieurs échecs (`PerSourcePenalties`) : la connexion réussie peut demander une deuxième tentative quelques secondes plus tard.
 C'est d'ailleurs une bonne protection à citer face à la force brute.
+
+## Règles Active Directory et comptes à privilèges (13 novembre)
+
+Trois règles ajoutées, chacune en SIGMA et en règle native (`elastic/` avec suppression des doublons 30 min par
+`host.name` et `user.name`, `elastic-basic/` sans). Les trois SIGMA passent `sigma check` (pySigma, ATT&CK v20).
+
+| Règle (`rule_id`) | Type | Logique | Sévérité | MITRE | PCI DSS |
+|---|---|---|---|---|---|
+| Ajout à un groupe privilégié Active Directory (`azur-bank-ad-groupe-privilegie`) | Query (KQL) | `event.code` 4728, 4732 ou 4756 et groupe (`group.name` ou `winlog.event_data.TargetUserName`) parmi Admins du domaine, Administrateurs de l'entreprise, Administrateurs du schéma, Administrateurs, Opérateurs de compte, Opérateurs de sauvegarde (noms anglais et français) | high (73) | TA0003, TA0004 / T1098.007 | 7.2 |
+| Effacement d'un journal d'événements Windows (`azur-bank-effacement-journal`) | Query (KQL) | `event.code : "1102"`, ou `104` émis par `Microsoft-Windows-Eventlog` | high (73) | TA0112 / T1685.005 | 10.3 |
+| Connexion d'un compte administrateur hors heures ouvrées (`azur-bank-admin-hors-horaires`) | ES\|QL | Connexion réussie (4624 LogonType 2 ou 10, ou `ssh_login` du bastion) d'un compte `adm.*`, `Administrateur` ou `Administrator`, le week-end ou avant 7 h / après 20 h, heure de Paris | medium (47) | TA0001, TA0004 / T1078.002 | 10.2.1.2 |
+
+Points vérifiés dans les données du lab avant le déploiement :
+
+- 4728/4732/4756 : `group.name` et `winlog.event_data.TargetUserName` contiennent tous deux le nom du groupe, `user.target.name` le compte ajouté, `user.name` l'auteur.
+- 4624 : `winlog.event_data.LogonType` est une chaîne (`"2"`, `"10"`) ; `user.name` est le compte qui se connecte.
+- bastion-01 : `event.action : "ssh_login"` avec `event.outcome : "success"` dans `logs-system.auth-*`.
+- 104 : dataset `system.system`, `winlog.provider_name : "Microsoft-Windows-Eventlog"`, `winlog.channel : "System"`, sans `user.name`.
+- ES|QL : `DATE_EXTRACT("day_of_week", ...)` renvoie 1 pour lundi et 7 pour dimanche (vendredi 13/11 = 5), donc `jour >= 6` = week-end. L'heure de Paris est approchée par mois (avril à octobre UTC+2, sinon UTC+1) : les jours de changement d'heure peuvent être décalés d'une heure.
+- MITRE : depuis ATT&CK v20, « Clear Windows Event Logs » est T1685.005 (tactique Defense Impairment, TA0112), anciennement T1070.001 (Defense Evasion). `sigma check` refuse l'ancien tag ; Kibana affiche le nouveau.
+
+Sur l'historique, la règle ES|QL trouve un vrai cas : `Administrateur` en console sur srv-dc01 le samedi 7/11 à 00:31 (heure de Paris).
+
+### Tests sur le lab (13 novembre, heures UTC)
+
+Les règles `elastic-basic/` sont déployées sur le SIEM du lab (licence Basic) ; aucune n'a d'action, et le playbook
+Shuffle ne lit que les règles exfiltration et SWIFT.
+
+**1. Ajout aux Admins du domaine** (srv-dc01, PowerShell via `qm guest exec`) :
+
+```powershell
+# mot de passe aléatoire généré en mémoire, jamais écrit ni affiché
+New-ADUser -Name test.soc -SamAccountName test.soc -AccountPassword $sec -Enabled $true
+$g = Get-ADGroup -Identity ("{0}-512" -f (Get-ADDomain).DomainSID.Value)   # Admins du domaine
+Add-ADGroupMember -Identity $g -Members test.soc                            # 15:40:43
+# après l'alerte
+Remove-ADGroupMember -Identity $g -Members test.soc -Confirm:$false; Remove-ADUser test.soc -Confirm:$false   # 16:10:07
+```
+
+Résultat : OK. Alerte « Ajout à un groupe privilégié Active Directory » à 15:44:28 (high), événement 4728 de 15:40:43,
+compte ajouté `test.soc`, groupe « Admins du domaine », hôte srv-dc01. Le compte a ensuite été retiré du groupe et supprimé
+(membres restants : Administrateur, adm.fontaine).
+
+**2. Effacement des journaux** (srv-dc01) :
+
+```
+wevtutil cl System      # 16:10:22 -> événement 104
+wevtutil cl Security    # 16:10:46 -> événement 1102, lancé après avoir vérifié que Security était indexé jusqu'à 16:10:22
+```
+
+Résultat : OK. Deux alertes « Effacement d'un journal d'événements Windows » à 16:14:28 (high) : une pour le 104 (16:10:22),
+une pour le 1102 (16:10:46, compte « Système », car la commande passe par l'agent invité). Les événements effacés étaient
+déjà dans le SIEM : l'effacement local ne fait rien perdre à l'enquête.
+
+**3. Connexion administrateur hors heures ouvrées** : faute de connexion réelle à 2 h du matin, un SSH réussi de
+`adm.fontaine` sur bastion-01 daté du 13/11 à 01:13 UTC (02:13 à Paris) est écrit dans un data stream de test
+`logs-system.auth-test` (connecteur Kibana « Index » temporaire), puis la règle est lancée à la main sur 01:00-01:30
+(API `_bulk_action` avec `action: run` sur cette seule règle ; `regles.py run 2026-11-13T01:00:00.000Z 2026-11-13T01:30:00.000Z` fait la même chose pour toutes les règles).
+
+- Test positif : OK. Alerte « Connexion d'un compte administrateur hors heures ouvrées » à 16:11:25 (medium), `adm.fontaine`, bastion-01, `heure` = 2, `jour` = 5.
+- Test négatif : OK. Le même SSH daté de 16:11:39 (17:11 à Paris, vendredi) passe tous les filtres sauf la plage horaire ; l'exécution planifiée de 16:14:31 (fenêtre 16:08:31-16:14:31) n'a produit aucune alerte. Même chose sur l'historique : la connexion réelle d'adm.fontaine du vendredi 6/11 à 19:54 (Paris) n'est pas retenue.
+- Le data stream de test a été supprimé ensuite.
+
+Effets de bord : aucun Case SOAR créé, aucun compte ni IP touché par Shuffle.
+
+Captures : `captures/alerte-ad-groupe-privilegie-test.soc.png`, `captures/alerte-effacement-journal-srv-dc01.png`,
+`captures/alerte-admin-hors-horaires-adm.fontaine.png`.
